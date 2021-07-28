@@ -1,0 +1,17 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date %highlight(%-5level) %logger{36}:%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="akka" level="WARN"/>
+    <logger name="slick" level="WARN"/>
+    <logger name="org" level="WARN"/>
+    <logger name="com" level="WARN"/>
+    <logger name="it" level="INFO"/>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
