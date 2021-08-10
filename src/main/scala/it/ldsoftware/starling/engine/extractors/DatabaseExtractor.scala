@@ -1,11 +1,13 @@
 package it.ldsoftware.starling.engine.extractors
 import com.typesafe.config.Config
+import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.extractors.DatabaseExtractor.{AutoQuery, QueryType}
 import it.ldsoftware.starling.engine.util.Interpolator._
-import it.ldsoftware.starling.engine._
 import slick.jdbc.JdbcBackend._
-import slick.jdbc.{GetResult, JdbcProfile, SQLActionBuilder}
+import slick.jdbc.SetParameter._
+import slick.jdbc._
 
+import java.sql.{Date, Time, Timestamp}
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
@@ -37,6 +39,8 @@ class DatabaseExtractor(qt: QueryType, db: Database, driver: JdbcProfile) extend
 
   private def queryFromString(string: String): SQLActionBuilder = ???
 
+  implicit val setParameter: SetParameter[Any] = DatabaseExtractor.SetGenericParameter
+
   private def queryFromAutoQuery(query: AutoQuery): SQLActionBuilder =
     query._3
       .map {
@@ -50,6 +54,7 @@ class DatabaseExtractor(qt: QueryType, db: Database, driver: JdbcProfile) extend
     case Left(value) => Left(value <-- data)
     case Right(value) => Right((value._1, value._2, value._3 <-- data))
   }
+
 }
 
 object DatabaseExtractor extends ExtractorBuilder {
@@ -80,5 +85,22 @@ object DatabaseExtractor extends ExtractorBuilder {
     val driver = ???
 
     new DatabaseExtractor(queryType, db, driver)
+  }
+
+  implicit object SetGenericParameter extends SetParameter[Any] {
+    override def apply(v1: Any, pp: PositionedParameters): Unit = v1 match {
+      case v: BigDecimal => SetBigDecimal.apply(v, pp)
+      case v: Boolean => SetBoolean.apply(v, pp)
+      case v: Byte => SetByte.apply(v, pp)
+      case v: Date => SetDate.apply(v, pp)
+      case v: Double => SetDouble.apply(v, pp)
+      case v: Float => SetFloat.apply(v, pp)
+      case v: Int => SetInt.apply(v, pp)
+      case v: Long => SetLong.apply(v, pp)
+      case v: Short => SetShort.apply(v, pp)
+      case v: String => SetString.apply(v, pp)
+      case v: Time => SetTime.apply(v, pp)
+      case v: Timestamp => SetTimestamp.apply(v, pp)
+    }
   }
 }
