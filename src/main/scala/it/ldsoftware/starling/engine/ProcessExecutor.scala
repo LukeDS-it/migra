@@ -3,13 +3,10 @@ package it.ldsoftware.starling.engine
 import akka.NotUsed
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
 import akka.stream.{ClosedShape, Graph}
-import it.ldsoftware.starling.workers.consumers.Consumer
-import it.ldsoftware.starling.workers.extractors.Extractor
-import it.ldsoftware.starling.workers.model.{ConsumerResult, ExtractionResult}
 
 import scala.concurrent.Future
 
-class DataProcessor(extractors: List[Extractor], consumers: List[Consumer], parLevel: Int) {
+class ProcessExecutor(extractors: List[Extractor], consumers: List[Consumer], parLevel: Int) {
 
   val input: Source[ExtractionResult, NotUsed] =
     Source

@@ -1,6 +1,7 @@
-package it.ldsoftware.starling.workers.extractors
+package it.ldsoftware.starling.engine
 
-import it.ldsoftware.starling.workers.model.{Extracted, ExtractionResult}
+import com.typesafe.config.Config
+import it.ldsoftware.starling.engine.extractors.FailFastExtractor
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,5 +35,22 @@ trait Extractor {
     case Left(value)  => new FailFastExtractor(value)
     case Right(value) => toPipedExtractor(value)
   }
+
+}
+
+/**
+  * This class acts as a factory for an extractor. If you want your extractors to be
+  * taken from the process configuration you will need to extend this trait in a companion
+  * object of the extractor you're implementing
+  */
+trait ExtractorBuilder {
+
+  /**
+    * Must return an instance of the extractor created with the parameters specified in the
+    * configuration
+    * @param config the configuration of the extractor
+    * @return an instance of a extractor
+    */
+  def apply(config: Config): Extractor
 
 }

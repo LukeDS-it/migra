@@ -1,5 +1,5 @@
-package it.ldsoftware.starling.workers.extractors
-import it.ldsoftware.starling.workers.model.{Extracted, ExtractionResult}
+package it.ldsoftware.starling.engine.extractors
+import it.ldsoftware.starling.engine.{Extracted, ExtractionResult, Extractor}
 
 import scala.concurrent.Future
 

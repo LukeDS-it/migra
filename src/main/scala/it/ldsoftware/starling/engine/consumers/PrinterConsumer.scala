@@ -1,17 +1,16 @@
-package it.ldsoftware.starling.workers.consumers
+package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import it.ldsoftware.starling.workers.model.{Consumed, ConsumerResult, Extracted}
+import it.ldsoftware.starling.engine.util.Interpolator._
+import it.ldsoftware.starling.engine._
 
 import scala.concurrent.Future
-
-import it.ldsoftware.starling.workers.tools.Interpolator._
 
 class PrinterConsumer(template: String) extends Consumer with LazyLogging {
 
   override def consumeSuccess(data: Extracted): Future[ConsumerResult] = Future {
-    logger.info(template interpolatedWith data)
+    logger.info(template <-- data)
     Consumed("PrinterConsumer")
   }
 

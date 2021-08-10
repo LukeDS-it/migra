@@ -1,7 +1,7 @@
-package it.ldsoftware.starling.workers.consumers
+package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.Config
-import it.ldsoftware.starling.workers.model.{ConsumerResult, Extracted}
+import it.ldsoftware.starling.engine.{Consumer, ConsumerBuilder, ConsumerResult, Extracted}
 
 import scala.concurrent.Future
 

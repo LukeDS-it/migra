@@ -1,8 +1,8 @@
-package it.ldsoftware.starling.workers.extractors
+package it.ldsoftware.starling.engine.extractors
 import com.typesafe.config.Config
-import it.ldsoftware.starling.workers.extractors.DatabaseExtractor.{AutoQuery, QueryType}
-import it.ldsoftware.starling.workers.model.{ConfigOperations, Extracted, ExtractionResult}
-import it.ldsoftware.starling.workers.tools.Interpolator._
+import it.ldsoftware.starling.engine.extractors.DatabaseExtractor.{AutoQuery, QueryType}
+import it.ldsoftware.starling.engine.util.Interpolator._
+import it.ldsoftware.starling.engine._
 import slick.jdbc.JdbcBackend._
 import slick.jdbc.{GetResult, JdbcProfile, SQLActionBuilder}
 
@@ -47,8 +47,8 @@ class DatabaseExtractor(qt: QueryType, db: Database, driver: JdbcProfile) extend
       }
 
   private def interpolate(queryType: QueryType, data: Extracted): QueryType = queryType match {
-    case Left(value) => Left(value.interpolatedWith(data))
-    case Right(value) => Right((value._1, value._2, value._3.interpolatedWith(data)))
+    case Left(value) => Left(value <-- data)
+    case Right(value) => Right((value._1, value._2, value._3 <-- data))
   }
 }
 
