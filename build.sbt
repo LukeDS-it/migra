@@ -9,6 +9,7 @@ val encoderVersion = "6.6"
 val akkaHttpCirceVersion = "1.36.0"
 val circeVersion = "0.14.1"
 val freemarkerVersion = "2.3.31"
+val scalacticVersion = "3.2.10"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -39,11 +40,16 @@ val other = Seq(
   "org.freemarker" % "freemarker" % freemarkerVersion
 )
 
+val testDep = Seq(
+  "org.scalactic" %% "scalactic" % scalacticVersion,
+  "org.scalatest" %% "scalatest" % scalacticVersion % "test"
+)
+
 lazy val root = (project in file("."))
   .settings(
     organization := "it.ldsoftware",
     name := "starling-migrate",
     scalaVersion := "2.13.6",
     Compile / mainClass := Some("it.ldsoftware.starling.StarlingApp"),
-    libraryDependencies ++= akka ++ database ++ logging ++ json ++ other
+    libraryDependencies ++= akka ++ database ++ logging ++ json ++ other ++ testDep
   )

@@ -3,6 +3,7 @@ package it.ldsoftware.starling.engine.util
 import freemarker.template.{Configuration, Template, Version}
 import it.ldsoftware.starling.engine.Extracted
 import slick.jdbc.{PositionedParameters, SQLActionBuilder}
+import scala.jdk.CollectionConverters._
 
 import java.io.{StringReader, StringWriter}
 
@@ -16,7 +17,7 @@ object Interpolator {
 
     def interpolatedWith(data: Extracted): String = {
       val out = new StringWriter()
-      template.process(data, out)
+      template.process(data.asJava, out)
       val interpolated = out.toString
       out.flush()
       interpolated
