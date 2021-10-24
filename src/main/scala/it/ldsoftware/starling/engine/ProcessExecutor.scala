@@ -30,7 +30,7 @@ class ProcessExecutor(extractors: List[Extractor], consumers: List[Consumer], pa
     }
 
   def executionGraph(sink: Sink[ConsumerResult, Future[ConsumerResult]]): Graph[ClosedShape, Future[ConsumerResult]] =
-    GraphDSL.create(sink) { implicit builder => sink =>
+    GraphDSL.createGraph(sink) { implicit builder => sink =>
       import GraphDSL.Implicits._
 
       val piped = pipe.foldLeft(input ~> identity) {

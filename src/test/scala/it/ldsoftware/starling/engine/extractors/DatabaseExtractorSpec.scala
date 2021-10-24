@@ -9,14 +9,14 @@ import org.scalatest.wordspec.AnyWordSpec
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-//noinspection SqlNoDataSourceInspection
+//noinspection SqlDialectInspection,SqlNoDataSourceInspection
 class DatabaseExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with IntegrationPatience {
 
   import slick.jdbc.H2Profile.api._
 
-  val dbName = s"/tmp/${RandomStringUtils.randomAlphanumeric(10)}"
+  val jdbcUrl = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"
 
-  val db = Database.forURL(s"jdbc:h2:$dbName")
+  val db = Database.forURL(jdbcUrl)
 
   private val execute = db.run(
     DBIO.seq(
@@ -38,7 +38,7 @@ class DatabaseExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures 
         s"""
           |{
           |  "query": "select * from products",
-          |  "jdbc-url": "jdbc:h2:$dbName",
+          |  "jdbc-url": "$jdbcUrl",
           |  "jdbc-driver": "org.h2.Driver"
           |}
           |""".stripMargin

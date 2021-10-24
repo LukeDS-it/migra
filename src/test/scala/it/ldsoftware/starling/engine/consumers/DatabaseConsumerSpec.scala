@@ -2,7 +2,6 @@ package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.engine.Consumed
-import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -24,9 +23,9 @@ class DatabaseConsumerSpec
 
   import slick.jdbc.H2Profile.api._
 
-  val dbName = s"/tmp/${RandomStringUtils.randomAlphanumeric(10)}"
+  val jdbcUrl = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"
 
-  val db = Database.forURL(s"jdbc:h2:$dbName")
+  val db = Database.forURL(jdbcUrl)
 
   private val execute = db.run(
     DBIO.seq(
@@ -47,7 +46,7 @@ class DatabaseConsumerSpec
         s"""
            |{
            |  "query": "update products set price = $${newPrice} where name = '$${targetProduct}'",
-           |  "jdbc-url": "jdbc:h2:$dbName",
+           |  "jdbc-url": "$jdbcUrl",
            |  "jdbc-driver": "org.h2.Driver"
            |}
            |""".stripMargin
