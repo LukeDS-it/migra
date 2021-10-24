@@ -1,10 +1,10 @@
 package it.ldsoftware.starling.engine.util
 
+import it.ldsoftware.starling.engine.util.Interpolator._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import Interpolator._
-import org.scalatest.matchers.should
 
-class InterpolatorSpec extends AnyWordSpec with should.Matchers {
+class InterpolatorSpec extends AnyWordSpec with Matchers {
 
   "The main interpolator" should {
 

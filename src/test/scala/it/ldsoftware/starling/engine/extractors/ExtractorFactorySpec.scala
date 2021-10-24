@@ -1,10 +1,10 @@
 package it.ldsoftware.starling.engine.extractors
 
 import com.typesafe.config.ConfigFactory
-import org.scalatest.matchers.should
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class ExtractorFactorySpec extends AnyWordSpec with should.Matchers {
+class ExtractorFactorySpec extends AnyWordSpec with Matchers {
 
   // language=JSON
   private val config =

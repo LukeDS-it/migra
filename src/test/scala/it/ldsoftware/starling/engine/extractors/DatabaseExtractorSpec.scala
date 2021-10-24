@@ -2,14 +2,15 @@ package it.ldsoftware.starling.engine.extractors
 
 import com.typesafe.config.ConfigFactory
 import org.apache.commons.lang3.RandomStringUtils
-import org.scalatest.matchers.should
-import org.scalatest.wordspec.AsyncWordSpec
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
 //noinspection SqlNoDataSourceInspection
-class DatabaseExtractorSpec extends AsyncWordSpec with should.Matchers {
+class DatabaseExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with IntegrationPatience {
 
   import slick.jdbc.H2Profile.api._
 
@@ -29,11 +30,6 @@ class DatabaseExtractorSpec extends AsyncWordSpec with should.Matchers {
 
   Await.ready(execute, 2.seconds)
 
-  val steak = Map("id" -> 1, "name" -> "steak", "price" -> 1000)
-  val broth = Map("id" -> 2, "name" -> "broth", "price" -> 1250)
-  val bread = Map("id" -> 3, "name" -> "bread", "price" -> 250)
-  val yogurt = Map("id" -> 4, "name" -> "yogurt", "price" -> 199)
-
   "it" should {
 
     "extract rows from a query" in {
@@ -47,11 +43,14 @@ class DatabaseExtractorSpec extends AsyncWordSpec with should.Matchers {
           |}
           |""".stripMargin
 
+      val steak = Right(Map("id" -> 1, "name" -> "steak", "price" -> 1000))
+      val broth = Right(Map("id" -> 2, "name" -> "broth", "price" -> 1250))
+      val bread = Right(Map("id" -> 3, "name" -> "bread", "price" -> 250))
+      val yogurt = Right(Map("id" -> 4, "name" -> "yogurt", "price" -> 199))
+
       val subject = DatabaseExtractor(ConfigFactory.parseString(config))
 
-      subject.extract() map { it =>
-        it should contain allElementsOf Seq(Right(steak), Right(broth), Right(bread), Right(yogurt))
-      }
+      subject.extract().futureValue should contain allElementsOf Seq(steak, broth, bread, yogurt)
     }
 
   }
