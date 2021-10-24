@@ -6,7 +6,7 @@ import akka.stream.{ClosedShape, Graph}
 
 import scala.concurrent.Future
 
-class ProcessExecutor(extractors: List[Extractor], consumers: List[Consumer], parLevel: Int) {
+class ProcessStream(extractors: List[Extractor], consumers: List[Consumer], parLevel: Int) {
 
   val input: Source[ExtractionResult, NotUsed] =
     Source
