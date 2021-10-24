@@ -50,6 +50,8 @@ val testDep = Seq(
 )
 
 lazy val root = (project in file("."))
+  .configs(IntegrationTest)
+  .settings(Defaults.itSettings)
   .settings(
     organization := "it.ldsoftware",
     name := "starling-migrate",

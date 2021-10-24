@@ -1,0 +1,22 @@
+{
+  "extract": [
+    {
+      "type": "DatabaseExtractor",
+      "config": {
+        "query": "select name from products where price <= 1000",
+        "jdbc-url": "jdbc:h2:mem:integration;DB_CLOSE_DELAY=-1",
+        "jdbc-driver": "org.h2.Driver"
+      }
+    }
+  ],
+  "consume": [
+    {
+      "type": "DatabaseConsumer",
+      "config": {
+        "query": "insert into bought values($name)",
+        "jdbc-url": "jdbc:h2:mem:integration;DB_CLOSE_DELAY=-1",
+        "jdbc-driver": "org.h2.Driver"
+      }
+    }
+  ]
+}

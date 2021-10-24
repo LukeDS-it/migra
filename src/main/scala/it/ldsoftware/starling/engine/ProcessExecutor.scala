@@ -29,7 +29,7 @@ class ProcessExecutor(extractors: List[Extractor], consumers: List[Consumer], pa
         .mapAsync(parLevel)(rd => c.consume(rd))
     }
 
-  def executionGraph(sink: Sink[ConsumerResult, Future[ConsumerResult]]): Graph[ClosedShape, Future[ConsumerResult]] =
+  def executionGraph(sink: Sink[ConsumerResult, Future[String]]): Graph[ClosedShape, Future[String]] =
     GraphDSL.createGraph(sink) { implicit builder => sink =>
       import GraphDSL.Implicits._
 

@@ -19,7 +19,6 @@ package object engine {
     */
   type ExtractionResult = Either[String, Extracted]
 
-
   /**
     * Result of the consume operation
     */
@@ -27,9 +26,9 @@ package object engine {
 
   /**
     * Used when the consume operation was successful
-    * @param consumer the name of the consumer, for logging purposes
+    * @param info any info that will be logged if the consumer succeeds
     */
-  case class Consumed(consumer: String) extends ConsumerResult
+  case class Consumed(info: String) extends ConsumerResult
 
   /**
     * Used when the consume operation was not successful
@@ -39,15 +38,14 @@ package object engine {
     * @param err if available, it contains the throwable that made the operation fail
     */
   case class NotConsumed(
-                          consumer: String,
-                          reason: String,
-                          data: Option[Extracted],
-                          err: Option[Throwable]
-                        ) extends ConsumerResult
+      consumer: String,
+      reason: String,
+      data: Option[Extracted],
+      err: Option[Throwable]
+  ) extends ConsumerResult
 
   implicit class ConfigOperations(config: Config) {
     def getConfigSList(path: String): List[Config] = config.getConfigList(path).asScala.toList
   }
 
 }
-

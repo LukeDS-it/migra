@@ -6,8 +6,8 @@ import it.ldsoftware.starling.engine.extractors.ExtractorFactory
 
 class ProcessFactory(parLevel: Int) {
 
-  def generateProcess(hocon: String): ProcessExecutor = {
-    val config = ConfigFactory.parseString(hocon)
+  def generateProcess(descriptor: String): ProcessExecutor = {
+    val config = ConfigFactory.parseString(descriptor)
     val extractors = ExtractorFactory.getExtractors(config)
     val consumers = ConsumerFactory.getConsumers(config)
     new ProcessExecutor(extractors, consumers, parLevel)
