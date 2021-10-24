@@ -2,6 +2,7 @@ package it.ldsoftware.starling.engine.extractors
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.util.Interpolator._
+import it.ldsoftware.starling.engine.util.ReflectionFactory
 import slick.jdbc.JdbcBackend._
 import slick.jdbc.SetParameter._
 import slick.jdbc._
@@ -32,25 +33,9 @@ class DatabaseExtractor(query: String, db: Database, profile: JdbcProfile) exten
 object DatabaseExtractor extends ExtractorBuilder {
 
   override def apply(config: Config): Extractor = {
-    val query = config.getString("query")
-    val jdbcUrl = config.getString("jdbc-url")
-    val jdbcDriver = config.getString("jdbc-driver")
-
-    val db = Database.forURL(jdbcUrl, driver = jdbcDriver)
-    val profile = getProfile(jdbcDriver)
-
+    val (query, db, profile) = ReflectionFactory.getDbInfo(config)
     new DatabaseExtractor(query, db, profile)
   }
-
-  private def getProfile(jdbcDriver: String): JdbcProfile =
-    jdbcDriver match {
-      case "org.apache.derby.jdbc.EmbeddedDriver" => DerbyProfile
-      case "org.h2.Driver"                        => H2Profile
-      case "org.hsqldb.jdbcDriver"                => HsqldbProfile
-      case "com.mysql.jdbc.Driver"                => MySQLProfile
-      case "org.postgresql.Driver"                => PostgresProfile
-      case "org.sqlite.JDBC"                      => SQLiteProfile
-    }
 
   implicit object SetGenericParameter extends SetParameter[Any] {
     override def apply(v1: Any, pp: PositionedParameters): Unit =
