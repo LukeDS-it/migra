@@ -1,15 +1,17 @@
-val akkaVersion = "2.6.15"
-val akkaHttpVersion = "10.1.13"
+val akkaVersion = "2.6.17"
+val akkaHttpVersion = "10.2.6"
 val slickVersion = "3.3.3"
-val connectorVersion = "8.0.19"
-val scalaLoggingVersion = "3.9.3"
-val logbackVersion = "1.2.3"
-val janinoVersion = "3.1.4"
+val mysqlVersion = "8.0.25"
+val h2Version = "1.4.200"
+val scalaLoggingVersion = "3.9.4"
+val logbackVersion = "1.2.6"
+val janinoVersion = "3.1.6"
 val encoderVersion = "6.6"
-val akkaHttpCirceVersion = "1.36.0"
+val akkaHttpCirceVersion = "1.38.2"
 val circeVersion = "0.14.1"
 val freemarkerVersion = "2.3.31"
 val scalacticVersion = "3.2.10"
+val lang3Version = "3.12.0"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -20,7 +22,8 @@ val akka = Seq(
 val database = Seq(
   "com.typesafe.slick" %% "slick" % slickVersion,
   "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
-  "mysql" % "mysql-connector-java" % connectorVersion
+  "mysql" % "mysql-connector-java" % mysqlVersion,
+  "com.h2database" % "h2" % h2Version
 )
 val logging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
@@ -37,7 +40,8 @@ val json = Seq(
 )
 
 val other = Seq(
-  "org.freemarker" % "freemarker" % freemarkerVersion
+  "org.freemarker" % "freemarker" % freemarkerVersion,
+  "org.apache.commons" % "commons-lang3" % lang3Version
 )
 
 val testDep = Seq(
