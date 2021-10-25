@@ -2,6 +2,7 @@ package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.engine.Consumed
+import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -11,7 +12,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
-class DatabaseConsumerSpec
+class DatabaseConsumerIntSpec
     extends AnyWordSpec
     with Matchers
     with Eventually
@@ -23,9 +24,17 @@ class DatabaseConsumerSpec
 
   import slick.jdbc.H2Profile.api._
 
-  val jdbcUrl = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"
+  val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"
 
-  val db = Database.forURL(jdbcUrl)
+  private val config =
+    s"""
+       |dbConf {
+       |  url = "$jdbcUrl"
+       |  driver = org.h2.Driver
+       |}
+       |""".stripMargin
+
+  val db = Database.forConfig("dbConf", ConfigFactory.parseString(config))
 
   private val execute = db.run(
     DBIO.seq(

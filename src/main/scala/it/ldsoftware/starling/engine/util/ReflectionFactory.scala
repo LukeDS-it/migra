@@ -1,6 +1,6 @@
 package it.ldsoftware.starling.engine.util
 
-import com.typesafe.config.Config
+import com.typesafe.config.{Config, ConfigFactory}
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.{DerbyProfile, H2Profile, HsqldbProfile, JdbcBackend, JdbcProfile, MySQLProfile, PostgresProfile, SQLiteProfile}
 
@@ -17,14 +17,23 @@ object ReflectionFactory {
     val jdbcUrl = config.getString("jdbc-url")
     val jdbcDriver = config.getString("jdbc-driver")
 
-    val db = ReflectionFactory.getDatabase(jdbcUrl, jdbcDriver)
-    val profile = ReflectionFactory.getProfile(jdbcDriver)
+    val profile = getProfile(jdbcDriver)
+    val db = getDatabase(jdbcUrl, jdbcDriver)
 
     (query, db, profile)
   }
 
-  def getDatabase(jdbcUrl: String, jdbcDriver: String): Database =
-    Database.forURL(jdbcUrl, driver = jdbcDriver)
+  def getDatabase(jdbcUrl: String, jdbcDriver: String, user: String = null, password: String = null): Database = {
+    val config =
+      s"""
+        |dbConf {
+        |  url = "$jdbcUrl"
+        |  driver = $jdbcDriver
+        |}
+        |""".stripMargin
+
+    Database.forConfig("dbConf", ConfigFactory.parseString(config))
+  }
 
   def getProfile(jdbcDriver: String): JdbcProfile =
     jdbcDriver match {

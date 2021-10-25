@@ -35,7 +35,9 @@ trait Consumer {
 
   final def consume(data: ExtractionResult): Future[ConsumerResult] = data match {
     case Left(value)  => consumeFailure(value)
-    case Right(value) => consumeSuccess(value)
+    case Right(value) => consumeSuccess(value).recover {
+      case exc => NotConsumed(this.getClass.getSimpleName, exc.getMessage, Some(value), Some(exc))
+    }
   }
 
 }

@@ -5,22 +5,33 @@ import it.ldsoftware.starling.configuration.AppConfig
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should.Matchers
 
 import java.io.File
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.io.Source
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
 class StarlingStandaloneSpec
     extends AnyFeatureSpec
     with GivenWhenThen
+    with Matchers
     with ScalaFutures
     with Eventually
     with IntegrationPatience {
 
   import slick.jdbc.H2Profile.api._
-  val jdbcUrl = "jdbc:h2:mem:integration;DB_CLOSE_DELAY=-1"
-  val db = Database.forURL(jdbcUrl)
+
+  private val config =
+    s"""
+       |dbConf {
+       |  url = "jdbc:h2:mem:integration;DB_CLOSE_ON_EXIT=FALSE"
+       |  driver = org.h2.Driver
+       |}
+       |""".stripMargin
+
+  val db = Database.forConfig("dbConf", ConfigFactory.parseString(config))
 
   private val dbSetup = db.run(
     DBIO.seq(
@@ -48,9 +59,34 @@ class StarlingStandaloneSpec
       StarlingApp.run(appConfig, Array(descriptorPath))
 
       Then("the application will take data from one table and put it into another")
+      eventually {
+        db.run(sql"select name from bought".as[String])
+          .futureValue should contain allElementsOf Seq("steak", "bread", "yogurt")
+      }
 
       And("a report will be generated")
+      eventually {
+        val generated = new File("src/it/resources/")
+          .listFiles()
+          .map(_.getAbsolutePath)
+          .filter(_.contains("executed"))
+        generated should have size 1
 
+        val source = Source.fromFile(generated(0))
+
+        source.getLines().toList should contain allElementsOf Seq(
+          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('steak')",
+          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('bread')",
+          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('yogurt')"
+        )
+
+        source.close()
+      }
+
+      new File("src/it/resources/")
+        .listFiles()
+        .filter(_.getAbsolutePath.contains("executed"))
+        .foreach(_.delete())
     }
   }
 

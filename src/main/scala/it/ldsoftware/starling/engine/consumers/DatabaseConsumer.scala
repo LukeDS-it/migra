@@ -14,15 +14,11 @@ class DatabaseConsumer(query: String, db: Database, profile: JdbcProfile) extend
 
   import profile.api._
 
-  override def consumeSuccess(data: Extracted): Future[ConsumerResult] =
-    executeUpdate(query <-- data)
-      .recover {
-        case exc => NotConsumed("DatabaseConsumer", exc.getMessage, Some(data), Some(exc))
-      }
-
-  private def executeUpdate(query: String) =
-    db.run(sqlu"#$query")
-      .map(u => Consumed(s"DatabaseConsumer - $u rows affected by: $query"))
+  override def consumeSuccess(data: Extracted): Future[ConsumerResult] = {
+    val update = query <-- data
+    db.run(sqlu"#$update")
+      .map(u => Consumed(s"DatabaseConsumer - $u rows affected by: $update"))
+  }
 
 }
 

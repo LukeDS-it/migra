@@ -32,10 +32,11 @@ class ProcessRunner extends LazyLogging {
       val loggerSink = Sink.fold[String, ConsumerResult]("") {
         case (acc, Consumed(info)) =>
           logger.info(info)
-          s"$acc\n$info"
+          if (acc.isEmpty) info else s"$acc\n$info"
         case (acc, NotConsumed(consumer, reason, data, err)) =>
           logger.error(s"$consumer could not consume $data: $reason", err)
-          s"$acc\n$consumer could not consume $data: $reason"
+          val info = s"$consumer could not consume $data: $reason"
+          if (acc.isEmpty) info else s"$acc\n$info"
       }
 
       RunnableGraph

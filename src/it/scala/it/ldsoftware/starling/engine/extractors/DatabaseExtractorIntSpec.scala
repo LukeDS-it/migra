@@ -10,13 +10,21 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
-class DatabaseExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with IntegrationPatience {
+class DatabaseExtractorIntSpec extends AnyWordSpec with Matchers with ScalaFutures with IntegrationPatience {
 
   import slick.jdbc.H2Profile.api._
 
-  val jdbcUrl = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"
+  val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"
 
-  val db = Database.forURL(jdbcUrl)
+  private val config =
+    s"""
+       |dbConf {
+       |  url = "$jdbcUrl"
+       |  driver = org.h2.Driver
+       |}
+       |""".stripMargin
+
+  val db = Database.forConfig("dbConf", ConfigFactory.parseString(config))
 
   private val execute = db.run(
     DBIO.seq(

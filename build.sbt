@@ -45,8 +45,8 @@ val other = Seq(
 )
 
 val testDep = Seq(
-  "org.scalactic" %% "scalactic" % scalacticVersion,
-  "org.scalatest" %% "scalatest" % scalacticVersion % "test"
+  "org.scalactic" %% "scalactic" % scalacticVersion % "test,it",
+  "org.scalatest" %% "scalatest" % scalacticVersion % "test,it"
 )
 
 lazy val root = (project in file("."))
