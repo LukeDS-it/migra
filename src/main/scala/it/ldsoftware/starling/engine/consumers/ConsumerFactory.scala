@@ -2,7 +2,8 @@ package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine.util.ReflectionFactory
-import it.ldsoftware.starling.engine.{ConfigOperations, Consumer, ConsumerBuilder}
+import it.ldsoftware.starling.engine.{Consumer, ConsumerBuilder}
+import it.ldsoftware.starling.extensions.ConfigExtensions._
 
 object ConsumerFactory {
 

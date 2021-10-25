@@ -2,8 +2,6 @@ package it.ldsoftware.starling
 
 import com.typesafe.config.Config
 
-import scala.jdk.CollectionConverters.ListHasAsScala
-
 package object engine {
 
   /**
@@ -43,9 +41,5 @@ package object engine {
       data: Option[Extracted],
       err: Option[Throwable]
   ) extends ConsumerResult
-
-  implicit class ConfigOperations(config: Config) {
-    def getConfigSList(path: String): List[Config] = config.getConfigList(path).asScala.toList
-  }
 
 }

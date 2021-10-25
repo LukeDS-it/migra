@@ -2,7 +2,8 @@ package it.ldsoftware.starling.engine.util
 
 import com.typesafe.config.{Config, ConfigFactory}
 import slick.jdbc.JdbcBackend.Database
-import slick.jdbc.{DerbyProfile, H2Profile, HsqldbProfile, JdbcBackend, JdbcProfile, MySQLProfile, PostgresProfile, SQLiteProfile}
+import slick.jdbc._
+import it.ldsoftware.starling.extensions.ConfigExtensions._
 
 object ReflectionFactory {
 
@@ -16,6 +17,7 @@ object ReflectionFactory {
     val query = config.getString("query")
     val jdbcUrl = config.getString("jdbc-url")
     val jdbcDriver = config.getString("jdbc-driver")
+    val (username, password) = getCredentials(config)
 
     val profile = getProfile(jdbcDriver)
     val db = getDatabase(jdbcUrl, jdbcDriver)
@@ -39,6 +41,18 @@ object ReflectionFactory {
 
     Database.forConfig("dbConf", ConfigFactory.parseString(config))
   }
+
+  private[util] def getCredentials(config: Config): (String, String) =
+    if (!config.hasPath("credentials")) {
+      (null, null)
+    } else {
+      config.getString("credentials.type") match {
+        case "plain" => (config.getStringOrNull("credentials.user"), config.getStringOrNull("credentials.pass"))
+        case "env"   => ???
+        case "file"  => ???
+      }
+
+    }
 
   def getProfile(jdbcDriver: String): JdbcProfile =
     jdbcDriver match {

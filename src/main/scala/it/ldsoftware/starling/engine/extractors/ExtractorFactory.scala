@@ -2,7 +2,8 @@ package it.ldsoftware.starling.engine.extractors
 
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine.util.ReflectionFactory
-import it.ldsoftware.starling.engine.{ConfigOperations, Extractor, ExtractorBuilder}
+import it.ldsoftware.starling.engine.{Extractor, ExtractorBuilder}
+import it.ldsoftware.starling.extensions.ConfigExtensions._
 
 object ExtractorFactory {
 
