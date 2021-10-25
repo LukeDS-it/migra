@@ -2,6 +2,7 @@ package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.engine.Consumed
+import it.ldsoftware.starling.engine.util.ReflectionFactory
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -25,16 +26,7 @@ class DatabaseConsumerIntSpec
   import slick.jdbc.H2Profile.api._
 
   val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"
-
-  private val config =
-    s"""
-       |dbConf {
-       |  url = "$jdbcUrl"
-       |  driver = org.h2.Driver
-       |}
-       |""".stripMargin
-
-  val db = Database.forConfig("dbConf", ConfigFactory.parseString(config))
+  val db = ReflectionFactory.getDatabase(jdbcUrl, "org.h2.Driver")
 
   private val execute = db.run(
     DBIO.seq(
