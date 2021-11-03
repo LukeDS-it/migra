@@ -57,5 +57,10 @@ lazy val root = (project in file("."))
     name := "starling-migrate",
     scalaVersion := "2.13.6",
     Compile / mainClass := Some("it.ldsoftware.starling.StarlingApp"),
-    libraryDependencies ++= akka ++ database ++ logging ++ json ++ other ++ testDep
+    libraryDependencies ++= akka ++ database ++ logging ++ json ++ other ++ testDep,
+    Test / fork := true,
+    Test / envVars := Map(
+      "UNIT_DB_USER" -> "user",
+      "UNIT_DB_PASS" -> "pass"
+    )
   )

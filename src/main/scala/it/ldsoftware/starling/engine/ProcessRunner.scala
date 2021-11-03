@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.stream.scaladsl.{RunnableGraph, Sink}
 import com.typesafe.scalalogging.LazyLogging
+import it.ldsoftware.starling.extensions.UsableExtensions.UsableSource
 
 import java.io.{File, PrintWriter}
 import java.time.LocalDateTime
@@ -22,9 +23,7 @@ class ProcessRunner extends LazyLogging {
     if (!file.exists()) {
       logger.error(s"Specified file ${file.getAbsolutePath} does not exist")
     } else {
-      val source = Source.fromFile(file)
-      val manifest = source.getLines().mkString("\n")
-      source.close()
+      val manifest = Source.fromFile(file).use(_.getLines().mkString("\n"))
       logger.debug(s"Executing following plan:\n$manifest")
 
       val process = new ProcessFactory(4).generateProcess(manifest)
@@ -54,7 +53,7 @@ class ProcessRunner extends LazyLogging {
     }
 
   private def writeOutput(descriptorPath: String, report: String): Unit = {
-    val formatter = DateTimeFormatter.ISO_DATE_TIME
+    val formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HH-mm-ss")
     val dateTime = formatter.format(LocalDateTime.now())
     val outputPath = s"$descriptorPath.executed[$dateTime]"
     val writer = new PrintWriter(new File(outputPath))

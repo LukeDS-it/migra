@@ -5,6 +5,9 @@ import slick.jdbc.JdbcBackend.Database
 import slick.jdbc._
 import it.ldsoftware.starling.extensions.ConfigExtensions._
 
+import scala.io.Source
+import it.ldsoftware.starling.extensions.UsableExtensions._
+
 object ReflectionFactory {
 
   def getBuilder[T](fullyQualifiedClassName: String): T = {
@@ -20,7 +23,7 @@ object ReflectionFactory {
     val (username, password) = getCredentials(config)
 
     val profile = getProfile(jdbcDriver)
-    val db = getDatabase(jdbcUrl, jdbcDriver)
+    val db = getDatabase(jdbcUrl, jdbcDriver, username, password)
 
     (query, db, profile)
   }
@@ -46,12 +49,19 @@ object ReflectionFactory {
     if (!config.hasPath("credentials")) {
       (null, null)
     } else {
-      config.getString("credentials.type") match {
-        case "plain" => (config.getStringOrNull("credentials.user"), config.getStringOrNull("credentials.pass"))
-        case "env"   => ???
-        case "file"  => ???
-      }
+      def getPlainCredentials(config: Config) =
+        (config.getStringOrNull("credentials.user"), config.getStringOrNull("credentials.pass"))
 
+      config.getString("credentials.type") match {
+        case "plain" =>
+          getPlainCredentials(config)
+        case "env" =>
+          (System.getenv(config.getString("credentials.user")), System.getenv(config.getString("credentials.pass")))
+        case "file" =>
+          Source.fromFile(config.getString("credentials.file")).use { it =>
+            getPlainCredentials(ConfigFactory.parseString(it.getLines().mkString("\n")))
+          }
+      }
     }
 
   def getProfile(jdbcDriver: String): JdbcProfile =

@@ -3,6 +3,7 @@ package it.ldsoftware.starling
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.configuration.AppConfig
 import it.ldsoftware.starling.engine.util.ReflectionFactory
+import it.ldsoftware.starling.extensions.UsableExtensions.UsableSource
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.featurespec.AnyFeatureSpec
@@ -66,15 +67,14 @@ class StarlingStandaloneSpec
           .filter(_.contains("executed"))
         generated should have size 1
 
-        val source = Source.fromFile(generated(0))
+        val log = Source.fromFile(generated(0)).use(_.getLines().toList)
 
-        source.getLines().toList should contain allElementsOf Seq(
+        log should contain allElementsOf Seq(
           "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('steak')",
           "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('bread')",
           "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('yogurt')"
         )
 
-        source.close()
       }
 
       new File("src/it/resources/")

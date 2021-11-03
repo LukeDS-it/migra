@@ -1,7 +1,5 @@
 package it.ldsoftware.starling
 
-import com.typesafe.config.Config
-
 package object engine {
 
   /**
