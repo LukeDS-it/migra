@@ -1,0 +1,20 @@
+{
+  "extract": [
+    {
+      "type": "HttpExtractor",
+      "config": {
+        "url": "http://localhost:8080/products"
+      }
+    }
+  ],
+  "consume": [
+    {
+      "type": "DatabaseConsumer",
+      "config": {
+        "query": "insert into bought (name) values('${name}')",
+        "jdbc-url": "jdbc:h2:mem:integration;DB_CLOSE_ON_EXIT=FALSE",
+        "jdbc-driver": "org.h2.Driver"
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 package it.ldsoftware.starling.engine.extractors
+import akka.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.util.Interpolator._
@@ -6,10 +7,11 @@ import it.ldsoftware.starling.engine.util.ReflectionFactory
 import slick.jdbc.JdbcBackend._
 import slick.jdbc._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
-class DatabaseExtractor(query: String, db: Database, profile: JdbcProfile) extends Extractor {
+class DatabaseExtractor(query: String, db: Database, profile: JdbcProfile)(implicit val ec: ExecutionContext)
+    extends Extractor {
 
   import DatabaseExtractor.MapGetResult
   import profile.api._
@@ -28,8 +30,9 @@ class DatabaseExtractor(query: String, db: Database, profile: JdbcProfile) exten
 
 object DatabaseExtractor extends ExtractorBuilder {
 
-  override def apply(config: Config): Extractor = {
+  override def apply(config: Config, ec: ExecutionContext, mat: Materializer): Extractor = {
     val (query, db, profile) = ReflectionFactory.getDbInfo(config)
+    implicit val executionContext: ExecutionContext = ec
     new DatabaseExtractor(query, db, profile)
   }
 

@@ -1,5 +1,6 @@
 package it.ldsoftware.starling.engine.consumers
 
+import akka.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.util.Interpolator.StringInterpolator
@@ -7,10 +8,11 @@ import it.ldsoftware.starling.engine.util.ReflectionFactory
 import slick.jdbc.JdbcBackend._
 import slick.jdbc._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
-class DatabaseConsumer(query: String, db: Database, profile: JdbcProfile) extends Consumer {
+class DatabaseConsumer(query: String, db: Database, profile: JdbcProfile)(implicit val ec: ExecutionContext)
+    extends Consumer {
 
   import profile.api._
 
@@ -24,8 +26,9 @@ class DatabaseConsumer(query: String, db: Database, profile: JdbcProfile) extend
 
 object DatabaseConsumer extends ConsumerBuilder {
 
-  override def apply(config: Config): DatabaseConsumer = {
+  override def apply(config: Config, ec: ExecutionContext, mat: Materializer): DatabaseConsumer = {
     val (query, db, profile) = ReflectionFactory.getDbInfo(config)
+    implicit val executionContext: ExecutionContext = ec
     new DatabaseConsumer(query, db, profile)
   }
 

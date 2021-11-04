@@ -1,5 +1,6 @@
 package it.ldsoftware.starling.engine
 
+import akka.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine.extractors.FailFastExtractor
 
@@ -11,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 trait Extractor {
 
-  implicit val ec: ExecutionContext = ExecutionContext.global
+  implicit val ec: ExecutionContext
 
   /**
     * This function must start the data extraction and create a sequence of
@@ -49,8 +50,10 @@ trait ExtractorBuilder {
     * Must return an instance of the extractor created with the parameters specified in the
     * configuration
     * @param config the configuration of the extractor
+    * @param ec the execution context if needed for Future operations
+    * @param mat the akka actor system materializer, in case it is needed
     * @return an instance of a extractor
     */
-  def apply(config: Config): Extractor
+  def apply(config: Config, ec: ExecutionContext, mat: Materializer): Extractor
 
 }

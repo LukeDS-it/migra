@@ -17,7 +17,7 @@ class ExtractorFactorySpec extends AnyWordSpec with Matchers {
 
     "build the correct extractor from a configuration" in {
       val c = ConfigFactory.parseString(config)
-      val extractors = ExtractorFactory.getExtractors(c)
+      val extractors = ExtractorFactory.getExtractors(c, null, null)
 
       extractors should have size 1
 

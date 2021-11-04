@@ -17,7 +17,7 @@ class ConsumerFactorySpec extends AnyWordSpec with Matchers {
 
     "build the correct consumer from a configuration" in {
       val c = ConfigFactory.parseString(config)
-      val consumers = ConsumerFactory.getConsumers(c)
+      val consumers = ConsumerFactory.getConsumers(c, null, null)
 
       consumers should have size 1
 

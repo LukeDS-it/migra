@@ -1,5 +1,6 @@
 package it.ldsoftware.starling.engine
 
+import akka.stream.Materializer
 import com.typesafe.config.Config
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -10,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 trait Consumer {
 
-  implicit val ec: ExecutionContext = ExecutionContext.global
+  implicit val ec: ExecutionContext
 
   /**
     * Consumes the outcome of the extraction process. This function is called whenever
@@ -55,6 +56,6 @@ trait ConsumerBuilder {
     * @param config the configuration of the consumer
     * @return an instance of a consumer
     */
-  def apply(config: Config): Consumer
+  def apply(config: Config, ec: ExecutionContext, mat: Materializer): Consumer
 
 }
