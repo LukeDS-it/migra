@@ -12,6 +12,8 @@ val circeVersion = "0.14.1"
 val freemarkerVersion = "2.3.31"
 val scalacticVersion = "3.2.10"
 val lang3Version = "3.12.0"
+val jsonPathVersion = "2.6.0"
+val jacksonVersion = "2.13.0"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -36,7 +38,10 @@ val json = Seq(
   "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceVersion,
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
-  "io.circe" %% "circe-parser" % circeVersion
+  "io.circe" %% "circe-parser" % circeVersion,
+  "com.jayway.jsonpath" % "json-path" % jsonPathVersion,
+  "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
 )
 
 val other = Seq(
@@ -46,7 +51,8 @@ val other = Seq(
 
 val testDep = Seq(
   "org.scalactic" %% "scalactic" % scalacticVersion % "test,it",
-  "org.scalatest" %% "scalatest" % scalacticVersion % "test,it"
+  "org.scalatest" %% "scalatest" % scalacticVersion % "test,it",
+  "com.github.tomakehurst" % "wiremock-jre8" % "2.31.0" % "test"
 )
 
 lazy val root = (project in file("."))
