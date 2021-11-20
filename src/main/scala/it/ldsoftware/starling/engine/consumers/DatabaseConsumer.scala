@@ -1,6 +1,5 @@
 package it.ldsoftware.starling.engine.consumers
 
-import akka.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.util.Interpolator.StringInterpolator
@@ -26,9 +25,9 @@ class DatabaseConsumer(query: String, db: Database, profile: JdbcProfile)(implic
 
 object DatabaseConsumer extends ConsumerBuilder {
 
-  override def apply(config: Config, ec: ExecutionContext, mat: Materializer): DatabaseConsumer = {
+  override def apply(config: Config, pc: ProcessContext): DatabaseConsumer = {
     val (query, db, profile) = ReflectionFactory.getDbInfo(config)
-    implicit val executionContext: ExecutionContext = ec
+    implicit val executionContext: ExecutionContext = pc.executionContext
     new DatabaseConsumer(query, db, profile)
   }
 

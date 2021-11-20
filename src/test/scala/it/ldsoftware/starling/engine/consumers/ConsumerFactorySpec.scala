@@ -1,6 +1,8 @@
 package it.ldsoftware.starling.engine.consumers
 
+import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
+import it.ldsoftware.starling.engine.ProcessContext
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -17,7 +19,8 @@ class ConsumerFactorySpec extends AnyWordSpec with Matchers {
 
     "build the correct consumer from a configuration" in {
       val c = ConfigFactory.parseString(config)
-      val consumers = ConsumerFactory.getConsumers(c, null, null)
+      val pc = ProcessContext(ActorSystem("test"))
+      val consumers = ConsumerFactory.getConsumers(c, pc)
 
       consumers should have size 1
 

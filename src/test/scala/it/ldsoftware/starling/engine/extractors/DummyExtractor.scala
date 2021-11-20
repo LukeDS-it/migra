@@ -1,8 +1,7 @@
 package it.ldsoftware.starling.engine.extractors
 
-import akka.stream.Materializer
 import com.typesafe.config.Config
-import it.ldsoftware.starling.engine.{Extracted, ExtractionResult, Extractor, ExtractorBuilder}
+import it.ldsoftware.starling.engine._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -14,6 +13,6 @@ class DummyExtractor(val parameter: String)(implicit val ec: ExecutionContext) e
 }
 
 object DummyExtractor extends ExtractorBuilder {
-  override def apply(config: Config, ec: ExecutionContext, mat: Materializer): Extractor =
-    new DummyExtractor(config.getString("parameter"))(ec)
+  override def apply(config: Config, pc: ProcessContext): Extractor =
+    new DummyExtractor(config.getString("parameter"))(pc.executionContext)
 }

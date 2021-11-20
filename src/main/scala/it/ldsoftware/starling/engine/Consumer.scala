@@ -1,6 +1,5 @@
 package it.ldsoftware.starling.engine
 
-import akka.stream.Materializer
 import com.typesafe.config.Config
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,8 +56,9 @@ trait ConsumerBuilder {
     * Must return an instance of the consumer created with the parameters specified in the
     * configuration
     * @param config the configuration of the consumer
+    * @param pc the context in which a process is executed, see the doc for the class.
     * @return an instance of a consumer
     */
-  def apply(config: Config, ec: ExecutionContext, mat: Materializer): Consumer
+  def apply(config: Config, pc: ProcessContext): Consumer
 
 }

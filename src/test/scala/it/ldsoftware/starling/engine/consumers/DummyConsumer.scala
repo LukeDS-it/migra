@@ -1,8 +1,7 @@
 package it.ldsoftware.starling.engine.consumers
 
-import akka.stream.Materializer
 import com.typesafe.config.Config
-import it.ldsoftware.starling.engine.{Consumed, Consumer, ConsumerBuilder, ConsumerResult, Extracted}
+import it.ldsoftware.starling.engine._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -12,5 +11,6 @@ class DummyConsumer(val parameter: String)(implicit val ec: ExecutionContext) ex
 }
 
 object DummyConsumer extends ConsumerBuilder {
-  override def apply(config: Config, ec: ExecutionContext, mat: Materializer): Consumer = new DummyConsumer(config.getString("parameter"))(ec)
+  override def apply(config: Config, pc: ProcessContext): Consumer =
+    new DummyConsumer(config.getString("parameter"))(pc.executionContext)
 }

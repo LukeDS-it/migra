@@ -1,6 +1,5 @@
 package it.ldsoftware.starling.engine
 
-import akka.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine.extractors.FailFastExtractor
 
@@ -51,10 +50,9 @@ trait ExtractorBuilder {
     * Must return an instance of the extractor created with the parameters specified in the
     * configuration
     * @param config the configuration of the extractor
-    * @param ec the execution context if needed for Future operations
-    * @param mat the akka actor system materializer, in case it is needed
+    * @param pc the context in which a process is executed, see the doc for the class.
     * @return an instance of a extractor
     */
-  def apply(config: Config, ec: ExecutionContext, mat: Materializer): Extractor
+  def apply(config: Config, pc: ProcessContext): Extractor
 
 }

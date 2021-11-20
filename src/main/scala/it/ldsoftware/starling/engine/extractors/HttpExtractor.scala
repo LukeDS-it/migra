@@ -5,8 +5,10 @@ import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
+import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.extractors.HttpExtractor.AuthMehtod
-import it.ldsoftware.starling.engine.{Extracted, ExtractionResult, Extractor, ExtractorBuilder}
+import it.ldsoftware.starling.engine.util.Interpolator.StringInterpolator
+import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
 import it.ldsoftware.starling.extensions.JacksonExtension._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,7 +29,8 @@ class HttpExtractor(url: String, subPath: Option[String], auth: AuthMehtod, http
         case SubGeneric(gen) => Seq(Right(gen))
       }
 
-  override def toPipedExtractor(data: Extracted): Extractor = ???
+  override def toPipedExtractor(data: Extracted): Extractor =
+    new HttpExtractor(url <-- data, subPath, auth, http)
 
 }
 
@@ -42,5 +45,13 @@ object HttpExtractor extends ExtractorBuilder {
 
   case object NoAuth extends AuthMehtod
 
-  override def apply(config: Config, ec: ExecutionContext, mat: Materializer): Extractor = ???
+  override def apply(config: Config, pc: ProcessContext): Extractor = {
+    val url = config.getString("url")
+    val subPath = config.getOptString("subPath")
+    val auth = NoAuth
+    implicit val executionContext: ExecutionContext = pc.executionContext
+    implicit val materializer: Materializer = pc.materializer
+
+    new HttpExtractor(url, subPath, auth, pc.http)
+  }
 }

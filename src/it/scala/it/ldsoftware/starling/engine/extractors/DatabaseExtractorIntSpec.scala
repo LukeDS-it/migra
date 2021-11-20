@@ -1,15 +1,15 @@
 package it.ldsoftware.starling.engine.extractors
 
 import akka.actor.ActorSystem
-import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
+import it.ldsoftware.starling.engine.ProcessContext
 import it.ldsoftware.starling.engine.util.ReflectionFactory
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
@@ -17,8 +17,7 @@ class DatabaseExtractorIntSpec extends AnyWordSpec with Matchers with ScalaFutur
 
   import slick.jdbc.H2Profile.api._
 
-  private val mat = Materializer(ActorSystem("test"))
-  private val ec = ExecutionContext.global
+  private val pc = ProcessContext(ActorSystem("test"))
   private val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"
   private val db = ReflectionFactory.getDatabase(jdbcUrl, "org.h2.Driver")
 
@@ -52,7 +51,7 @@ class DatabaseExtractorIntSpec extends AnyWordSpec with Matchers with ScalaFutur
       val bread = Right(Map("id" -> 3, "name" -> "bread", "price" -> 250))
       val yogurt = Right(Map("id" -> 4, "name" -> "yogurt", "price" -> 199))
 
-      val subject = DatabaseExtractor(ConfigFactory.parseString(config), ec, mat)
+      val subject = DatabaseExtractor(ConfigFactory.parseString(config), pc)
 
       subject.extract().futureValue should contain allElementsOf Seq(steak, broth, bread, yogurt)
     }

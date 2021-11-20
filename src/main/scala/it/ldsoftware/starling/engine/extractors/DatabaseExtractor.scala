@@ -1,5 +1,4 @@
 package it.ldsoftware.starling.engine.extractors
-import akka.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.util.Interpolator._
@@ -30,9 +29,9 @@ class DatabaseExtractor(query: String, db: Database, profile: JdbcProfile)(impli
 
 object DatabaseExtractor extends ExtractorBuilder {
 
-  override def apply(config: Config, ec: ExecutionContext, mat: Materializer): Extractor = {
+  override def apply(config: Config, pc: ProcessContext): Extractor = {
     val (query, db, profile) = ReflectionFactory.getDbInfo(config)
-    implicit val executionContext: ExecutionContext = ec
+    implicit val executionContext: ExecutionContext = pc.executionContext
     new DatabaseExtractor(query, db, profile)
   }
 

@@ -1,17 +1,16 @@
 package it.ldsoftware.starling.engine.consumers
 
 import akka.actor.ActorSystem
-import akka.stream.Materializer
 import com.typesafe.config.ConfigFactory
-import it.ldsoftware.starling.engine.Consumed
 import it.ldsoftware.starling.engine.util.ReflectionFactory
+import it.ldsoftware.starling.engine.{Consumed, ProcessContext}
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
@@ -27,8 +26,7 @@ class DatabaseConsumerIntSpec
 
   import slick.jdbc.H2Profile.api._
 
-  private val mat = Materializer(ActorSystem("test"))
-  private val ec = ExecutionContext.global
+  private val pc = ProcessContext(ActorSystem("test"))
   private val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"
   private val db = ReflectionFactory.getDatabase(jdbcUrl, "org.h2.Driver")
 
@@ -58,7 +56,7 @@ class DatabaseConsumerIntSpec
 
       val expectedPrice = 50L
 
-      val subject = DatabaseConsumer(ConfigFactory.parseString(config), ec, mat)
+      val subject = DatabaseConsumer(ConfigFactory.parseString(config), pc)
 
       val extracted = Map("newPrice" -> expectedPrice, "targetProduct" -> "steak")
 

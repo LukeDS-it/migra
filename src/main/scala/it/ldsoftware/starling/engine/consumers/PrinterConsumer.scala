@@ -1,6 +1,5 @@
 package it.ldsoftware.starling.engine.consumers
 
-import akka.stream.Materializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.starling.engine._
@@ -20,7 +19,7 @@ class PrinterConsumer(template: String)(implicit val ec: ExecutionContext) exten
 
 object PrinterConsumer extends ConsumerBuilder {
 
-  override def apply(config: Config, ec: ExecutionContext, mat: Materializer): Consumer =
-    new PrinterConsumer(config.getString("template"))(ec)
+  override def apply(config: Config, pc: ProcessContext): Consumer =
+    new PrinterConsumer(config.getString("template"))(pc.executionContext)
 
 }
