@@ -3,9 +3,9 @@ package it.ldsoftware.starling.engine.util
 import freemarker.template.{Configuration, Template, Version}
 import it.ldsoftware.starling.engine.Extracted
 import slick.jdbc.{PositionedParameters, SQLActionBuilder}
-import scala.jdk.CollectionConverters._
 
 import java.io.{StringReader, StringWriter}
+import scala.jdk.CollectionConverters._
 
 object Interpolator {
 

@@ -32,10 +32,11 @@ trait Extractor {
     */
   def toPipedExtractor(data: Extracted): Extractor
 
-  final def piped(result: ExtractionResult): Extractor = result match {
-    case Left(value)  => new FailFastExtractor(value)
-    case Right(value) => toPipedExtractor(value)
-  }
+  final def piped(result: ExtractionResult): Extractor =
+    result match {
+      case Left(value)  => new FailFastExtractor(value)
+      case Right(value) => toPipedExtractor(value)
+    }
 
 }
 

@@ -1,12 +1,12 @@
 package it.ldsoftware.starling.engine.util
 
 import com.typesafe.config.{Config, ConfigFactory}
+import it.ldsoftware.starling.extensions.ConfigExtensions._
+import it.ldsoftware.starling.extensions.UsableExtensions._
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc._
-import it.ldsoftware.starling.extensions.ConfigExtensions._
 
 import scala.io.Source
-import it.ldsoftware.starling.extensions.UsableExtensions._
 
 object ReflectionFactory {
 

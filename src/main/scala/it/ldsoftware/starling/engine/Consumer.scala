@@ -30,16 +30,19 @@ trait Consumer {
     * @param msg the message coming from the extraction result
     * @return a [[Future]] containing a default [[NotConsumed]] instance
     */
-  def consumeFailure(msg: String): Future[ConsumerResult] = Future {
-    NotConsumed(this.getClass.getName, s"Error during upstream extraction: $msg", None, None)
-  }
-
-  final def consume(data: ExtractionResult): Future[ConsumerResult] = data match {
-    case Left(value)  => consumeFailure(value)
-    case Right(value) => consumeSuccess(value).recover {
-      case exc => NotConsumed(this.getClass.getSimpleName, exc.getMessage, Some(value), Some(exc))
+  def consumeFailure(msg: String): Future[ConsumerResult] =
+    Future {
+      NotConsumed(this.getClass.getName, s"Error during upstream extraction: $msg", None, None)
     }
-  }
+
+  final def consume(data: ExtractionResult): Future[ConsumerResult] =
+    data match {
+      case Left(value) => consumeFailure(value)
+      case Right(value) =>
+        consumeSuccess(value).recover {
+          case exc => NotConsumed(this.getClass.getSimpleName, exc.getMessage, Some(value), Some(exc))
+        }
+    }
 
 }
 

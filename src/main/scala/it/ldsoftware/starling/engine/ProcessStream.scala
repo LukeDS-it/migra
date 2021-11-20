@@ -1,9 +1,8 @@
 package it.ldsoftware.starling.engine
 
 import akka.NotUsed
-import akka.event.Logging
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
-import akka.stream.{Attributes, ClosedShape, Graph}
+import akka.stream.{ClosedShape, Graph}
 
 import scala.concurrent.Future
 
@@ -25,7 +24,7 @@ class ProcessStream(extractors: List[Extractor], consumers: List[Consumer], parL
       }
 
   lazy val output: List[Flow[ExtractionResult, ConsumerResult, NotUsed]] =
-    consumers map { c =>
+    consumers.map { c =>
       Flow[ExtractionResult]
         .mapAsync(parLevel)(rd => c.consume(rd))
     }

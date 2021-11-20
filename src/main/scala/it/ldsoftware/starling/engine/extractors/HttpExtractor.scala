@@ -9,7 +9,6 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.Json
 import it.ldsoftware.starling.engine.extractors.HttpExtractor.AuthMehtod
 import it.ldsoftware.starling.engine.{Extracted, ExtractionResult, Extractor, ExtractorBuilder}
-import io.circe.generic.auto._
 
 import scala.concurrent.{ExecutionContext, Future}
 

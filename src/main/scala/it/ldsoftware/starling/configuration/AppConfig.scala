@@ -12,4 +12,3 @@ object AppConfig {
   val StandaloneMode = "standalone"
   val ServerMode = "server"
 }
-
