@@ -1,18 +1,15 @@
 package it.ldsoftware.starling.engine.extractors
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.stream.Materializer
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.{BasicCredentials, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import it.ldsoftware.starling.engine.extractors.HttpExtractor.NoAuth
+import com.typesafe.config.ConfigFactory
+import it.ldsoftware.starling.engine.ProcessContext
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-
-import scala.concurrent.ExecutionContext
 
 class HttpExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with IntegrationPatience {
 
@@ -21,13 +18,18 @@ class HttpExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with
   WireMock.configureFor(wireMock.port())
 
   private val system = ActorSystem("test-http-extractor")
-  private implicit val mat: Materializer = Materializer(system)
-  private implicit val ec: ExecutionContext = system.dispatcher
-  private val http = Http(system)
-  private val baseUrl = s"http://localhost:${wireMock.port()}"
+  private val pc = ProcessContext(system)
 
   "extract" should {
     "get the whole response as extraction result" in {
+
+      //language=JSON
+      val config =
+        s"""
+          |{
+          | "url": "http://localhost:${wireMock.port()}"
+          |}
+          |""".stripMargin
 
       //language=JSON
       val json =
@@ -42,13 +44,22 @@ class HttpExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with
 
       val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
 
-      val subject = new HttpExtractor(baseUrl, None, NoAuth, http)
+      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
       subject.extract().futureValue shouldBe expected
     }
 
     "get a sub-property of the response as list of extraction result" in {
       val subProp = "content"
+
+      //language=JSON
+      val config =
+        s"""
+          |{
+          | "url": "http://localhost:${wireMock.port()}",
+          | "subPath": "$subProp"
+          |}
+          |""".stripMargin
 
       //language=JSON
       val json =
@@ -69,13 +80,22 @@ class HttpExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with
 
       stubFor(get("/").willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)))
 
-      val subject = new HttpExtractor(baseUrl, Some(subProp), NoAuth, http)
+      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
       subject.extract().futureValue shouldBe expected
     }
 
     "get a sub-property of the response as extraction result" in {
       val subProp = "credentials"
+
+      //language=JSON
+      val config =
+        s"""
+          |{
+          | "url": "http://localhost:${wireMock.port()}",
+          | "subPath": "$subProp"
+          |}
+          |""".stripMargin
 
       //language=JSON
       val json =
@@ -93,9 +113,50 @@ class HttpExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with
 
       stubFor(get("/").willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)))
 
-      val subject = new HttpExtractor(baseUrl, Some(subProp), NoAuth, http)
+      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
       subject.extract().futureValue shouldBe Seq(Right(expected))
+    }
+
+    "call URLs with basic auth credentials" in {
+      //language=JSON
+      val config =
+        s"""
+          |{
+          | "url": "http://localhost:${wireMock.port()}",
+          | "auth": {
+          |   "type": "basic",
+          |   "credentials": {
+          |     "type": "plain",
+          |     "user": "user",
+          |     "pass": "pass"
+          |   }
+          | }
+          |}
+          |""".stripMargin
+
+      //language=JSON
+      val json =
+        """
+          |{
+          |  "strField": "string",
+          |  "intField": 10
+          |}
+          |""".stripMargin
+
+      stubFor(
+        get("/")
+          .withBasicAuth("user", "pass")
+          .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json))
+      )
+
+      val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
+
+      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
+
+      subject.extract().futureValue shouldBe expected
+
+      verify(getRequestedFor(urlEqualTo("/")).withBasicAuth(new BasicCredentials("user", "pass")))
     }
   }
 

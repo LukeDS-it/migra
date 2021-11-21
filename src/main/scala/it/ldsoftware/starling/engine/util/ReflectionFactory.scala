@@ -45,7 +45,7 @@ object ReflectionFactory {
     Database.forConfig("dbConf", ConfigFactory.parseString(config))
   }
 
-  private[util] def getCredentials(config: Config): (String, String) =
+  def getCredentials(config: Config): (String, String) =
     if (!config.hasPath("credentials")) {
       (null, null)
     } else {

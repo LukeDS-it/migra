@@ -20,7 +20,6 @@ case class ProcessContext(system: ActorSystem) {
 
   lazy val executionContext: ExecutionContext = system.dispatcher
 
-  lazy val http: HttpExt =  Http(system)
-
+  lazy val http: HttpExt = Http(system)
 
 }
