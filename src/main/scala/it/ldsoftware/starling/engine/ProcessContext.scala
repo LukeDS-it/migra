@@ -14,12 +14,14 @@ import scala.concurrent.ExecutionContext
   *
   * @param system the main actor system that is used to run the process
   */
-case class ProcessContext(system: ActorSystem) {
+case class ProcessContext(system: ActorSystem, tokenCaches: Map[String, TokenProvider] = Map()) {
 
   lazy val materializer: Materializer = Materializer(system)
 
   lazy val executionContext: ExecutionContext = system.dispatcher
 
   lazy val http: HttpExt = Http(system)
+
+  def getTokenCache(name: String): TokenProvider = tokenCaches(name)
 
 }

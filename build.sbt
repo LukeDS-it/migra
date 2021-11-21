@@ -14,6 +14,8 @@ val scalacticVersion = "3.2.10"
 val lang3Version = "3.12.0"
 val jsonPathVersion = "2.6.0"
 val jacksonVersion = "2.13.0"
+val wiremockVersion = "2.31.0"
+val scalamockVersion = "5.1.0"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -52,7 +54,8 @@ val other = Seq(
 val testDep = Seq(
   "org.scalactic" %% "scalactic" % scalacticVersion % "test,it",
   "org.scalatest" %% "scalatest" % scalacticVersion % "test,it",
-  "com.github.tomakehurst" % "wiremock-jre8" % "2.31.0" % "test"
+  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % Test,
+  "org.scalamock" %% "scalamock" % scalamockVersion % Test
 )
 
 lazy val root = (project in file("."))

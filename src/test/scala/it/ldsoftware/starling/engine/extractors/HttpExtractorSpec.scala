@@ -6,12 +6,22 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{BasicCredentials, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.typesafe.config.ConfigFactory
-import it.ldsoftware.starling.engine.ProcessContext
+import it.ldsoftware.starling.engine.{ProcessContext, TokenProvider}
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class HttpExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with IntegrationPatience {
+import scala.concurrent.Future
+
+class HttpExtractorSpec
+    extends AnyWordSpec
+    with GivenWhenThen
+    with Matchers
+    with MockFactory
+    with ScalaFutures
+    with IntegrationPatience {
 
   private val wireMock = new WireMockServer(wireMockConfig().dynamicPort())
   wireMock.start()
@@ -196,6 +206,51 @@ class HttpExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with
 
       subject.extract().futureValue shouldBe expected
 
+      verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer token")))
+    }
+
+    "call URLs with an OAuth2 token provided by a cached provider" in {
+      Given("a configuration for an http extractor that requires a token provider")
+      //language=JSON
+      val config =
+        s"""
+           |{
+           | "url": "http://localhost:${wireMock.port()}",
+           | "auth": {
+           |   "type": "oauth2",
+           |   "provider": "mockedProvider"
+           | }
+           |}
+           |""".stripMargin
+
+      And("a mocked provider that returns tokens")
+      val mockedProvider = mock[TokenProvider]
+      (mockedProvider.token _).expects().returning(Future.successful("token"))
+      val withCaches = pc.copy(tokenCaches = Map("mockedProvider" -> mockedProvider))
+
+      And("response data")
+      //language=JSON
+      val json =
+      """
+          |{
+          |  "strField": "string",
+          |  "intField": 10
+          |}
+          |""".stripMargin
+      val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
+
+      stubFor(
+        get("/")
+          .withHeader("Authorization", equalTo("Bearer token"))
+          .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json))
+      )
+
+      val subject = HttpExtractor(ConfigFactory.parseString(config), withCaches)
+
+      When("extracting the data")
+      subject.extract().futureValue shouldBe expected
+
+      Then("the request should have the token in the authorization header")
       verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer token")))
     }
 
