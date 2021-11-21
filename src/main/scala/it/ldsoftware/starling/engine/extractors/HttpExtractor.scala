@@ -1,15 +1,15 @@
 package it.ldsoftware.starling.engine.extractors
 
 import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.headers.{Authorization, BasicHttpCredentials}
+import akka.http.scaladsl.model.headers.{Authorization, BasicHttpCredentials, OAuth2BearerToken}
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.extractors.HttpExtractor.AuthMethod
+import it.ldsoftware.starling.engine.util.CredentialManager
 import it.ldsoftware.starling.engine.util.Interpolator.StringInterpolator
-import it.ldsoftware.starling.engine.util.ReflectionFactory
 import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
 import it.ldsoftware.starling.extensions.JacksonExtension._
 
@@ -43,11 +43,13 @@ object HttpExtractor extends ExtractorBuilder {
       this match {
         case NoAuth                => Seq()
         case BasicAuth(user, pass) => Seq(Authorization(BasicHttpCredentials(user, pass)))
+        case BearerAuth(bearer)    => Seq(Authorization(OAuth2BearerToken(bearer)))
       }
   }
 
   case object NoAuth extends AuthMethod
   case class BasicAuth(user: String, pass: String) extends AuthMethod
+  case class BearerAuth(bearer: String) extends AuthMethod
 
   override def apply(config: Config, pc: ProcessContext): Extractor = {
     val url = config.getString("url")
@@ -63,7 +65,8 @@ object HttpExtractor extends ExtractorBuilder {
     if (config.hasPath("auth")) {
       val authConfig = config.getConfig("auth")
       authConfig.getString("type") match {
-        case "basic" => BasicAuth.tupled(ReflectionFactory.getCredentials(authConfig))
+        case "basic"  => BasicAuth.tupled(CredentialManager.getCredentials(authConfig))
+        case "bearer" => BearerAuth(CredentialManager.getToken(authConfig))
       }
     } else {
       NoAuth

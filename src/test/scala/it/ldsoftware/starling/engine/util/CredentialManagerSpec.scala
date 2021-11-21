@@ -4,7 +4,7 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class ReflectionFactorySpec extends AnyWordSpec with Matchers {
+class CredentialManagerSpec extends AnyWordSpec with Matchers {
 
   "getCredentials" should {
 
@@ -13,7 +13,7 @@ class ReflectionFactorySpec extends AnyWordSpec with Matchers {
         s"""
            |
            |""".stripMargin
-      ReflectionFactory.getCredentials(ConfigFactory.parseString(config)) shouldBe (null, null)
+      CredentialManager.getCredentials(ConfigFactory.parseString(config)) shouldBe (null, null)
     }
 
     "return plain text username and password" in {
@@ -27,7 +27,7 @@ class ReflectionFactorySpec extends AnyWordSpec with Matchers {
            |}
            |""".stripMargin
 
-      ReflectionFactory.getCredentials(ConfigFactory.parseString(config)) shouldBe ("user", "pass")
+      CredentialManager.getCredentials(ConfigFactory.parseString(config)) shouldBe ("user", "pass")
     }
 
     "return only username if no password is specified" in {
@@ -40,7 +40,7 @@ class ReflectionFactorySpec extends AnyWordSpec with Matchers {
            |}
            |""".stripMargin
 
-      ReflectionFactory.getCredentials(ConfigFactory.parseString(config)) shouldBe ("user", null)
+      CredentialManager.getCredentials(ConfigFactory.parseString(config)) shouldBe ("user", null)
     }
 
     "return environment variables" in {
@@ -54,7 +54,7 @@ class ReflectionFactorySpec extends AnyWordSpec with Matchers {
            |}
            |""".stripMargin
 
-      ReflectionFactory.getCredentials(ConfigFactory.parseString(config)) shouldBe ("user", "pass")
+      CredentialManager.getCredentials(ConfigFactory.parseString(config)) shouldBe ("user", "pass")
     }
 
     "take credentials from a file" in {
@@ -68,7 +68,7 @@ class ReflectionFactorySpec extends AnyWordSpec with Matchers {
           |}
           |""".stripMargin
 
-      ReflectionFactory.getCredentials(ConfigFactory.parseString(config)) shouldBe ("user", "pass")
+      CredentialManager.getCredentials(ConfigFactory.parseString(config)) shouldBe ("user", "pass")
     }
 
   }

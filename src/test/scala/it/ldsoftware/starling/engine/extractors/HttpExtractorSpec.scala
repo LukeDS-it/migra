@@ -158,6 +158,47 @@ class HttpExtractorSpec extends AnyWordSpec with Matchers with ScalaFutures with
 
       verify(getRequestedFor(urlEqualTo("/")).withBasicAuth(new BasicCredentials("user", "pass")))
     }
+
+    "call URLs with a static bearer token" in {
+      //language=JSON
+      val config =
+        s"""
+           |{
+           | "url": "http://localhost:${wireMock.port()}",
+           | "auth": {
+           |   "type": "bearer",
+           |   "credentials": {
+           |     "type": "plain",
+           |     "token": "token"
+           |   }
+           | }
+           |}
+           |""".stripMargin
+
+      //language=JSON
+      val json =
+        """
+          |{
+          |  "strField": "string",
+          |  "intField": 10
+          |}
+          |""".stripMargin
+
+      stubFor(
+        get("/")
+          .withHeader("Authorization", equalTo("Bearer token"))
+          .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json))
+      )
+
+      val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
+
+      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
+
+      subject.extract().futureValue shouldBe expected
+
+      verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer token")))
+    }
+
   }
 
 }
