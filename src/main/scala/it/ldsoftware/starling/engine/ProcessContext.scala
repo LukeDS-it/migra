@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.{Http, HttpExt}
 import akka.stream.Materializer
 
+import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 
 /**
@@ -14,7 +15,7 @@ import scala.concurrent.ExecutionContext
   *
   * @param system the main actor system that is used to run the process
   */
-case class ProcessContext(system: ActorSystem, tokenCaches: Map[String, TokenProvider] = Map()) {
+case class ProcessContext(system: ActorSystem, tokenCaches: mutable.Map[String, TokenProvider] = mutable.Map()) {
 
   lazy val materializer: Materializer = Materializer(system)
 
@@ -23,5 +24,7 @@ case class ProcessContext(system: ActorSystem, tokenCaches: Map[String, TokenPro
   lazy val http: HttpExt = Http(system)
 
   def getTokenCache(name: String): TokenProvider = tokenCaches(name)
+
+  def addTokenCache(name: String, tokenProvider: TokenProvider): Unit = tokenCaches.put(name, tokenProvider)
 
 }

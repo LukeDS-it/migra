@@ -13,6 +13,7 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import scala.collection.mutable
 import scala.concurrent.Future
 
 class HttpExtractorSpec
@@ -226,7 +227,7 @@ class HttpExtractorSpec
       And("a mocked provider that returns tokens")
       val mockedProvider = mock[TokenProvider]
       (mockedProvider.token _).expects().returning(Future.successful("token"))
-      val withCaches = pc.copy(tokenCaches = Map("mockedProvider" -> mockedProvider))
+      val withCaches = pc.copy(tokenCaches = mutable.Map("mockedProvider" -> mockedProvider))
 
       And("response data")
       //language=JSON
