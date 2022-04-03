@@ -4,19 +4,21 @@ import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.extensions.DatabaseExtensions
 import it.ldsoftware.starling.extensions.Interpolator.ExtendedConnection
-import it.ldsoftware.starling.extensions.UsableExtensions.UsableConnection
+import it.ldsoftware.starling.extensions.UsableExtensions.{LetOperations, UsableConnection}
 
 import java.sql.Connection
 import scala.concurrent.{ExecutionContext, Future}
 
-class DatabaseConsumer(query: String, conn: Connection)(implicit val ec: ExecutionContext)
-    extends Consumer {
+class DatabaseConsumer(query: String, conn: Connection)(implicit val ec: ExecutionContext) extends Consumer {
 
-  override def consumeSuccess(data: Extracted): Future[ConsumerResult] = conn.use { it =>
-    Future(it.prepareNamedStatement(query, data))
-      .map(_.executeUpdate())
-      .map(u => Consumed(s"DatabaseConsumer - $u rows affected by: $query"))
-  }
+  override def consumeSuccess(data: Extracted): Future[ConsumerResult] =
+    Future {
+      conn.use { it =>
+        it.prepareNamedStatement(query, data)
+          .let(_.executeUpdate())
+          .let(u => Consumed(s"DatabaseConsumer - $u rows affected by: $query"))
+      }
+    }
 
 }
 

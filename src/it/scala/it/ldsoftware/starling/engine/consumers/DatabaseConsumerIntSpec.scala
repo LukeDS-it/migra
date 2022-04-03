@@ -48,7 +48,7 @@ class DatabaseConsumerIntSpec
       val config =
         s"""
            |{
-           |  "query": "update products set price = $${newPrice} where name = '$${targetProduct}'",
+           |  "query": "update products set price = :newPrice where name = :targetProduct",
            |  "jdbc-url": "$jdbcUrl",
            |  "jdbc-driver": "org.h2.Driver"
            |}
@@ -61,7 +61,7 @@ class DatabaseConsumerIntSpec
       val extracted = Map("newPrice" -> expectedPrice, "targetProduct" -> "steak")
 
       subject.consumeSuccess(extracted).futureValue shouldBe Consumed(
-        "DatabaseConsumer - 1 rows affected by: update products set price = 50 where name = 'steak'"
+        "DatabaseConsumer - 1 rows affected by: update products set price = :newPrice where name = :targetProduct"
       )
 
       eventually {

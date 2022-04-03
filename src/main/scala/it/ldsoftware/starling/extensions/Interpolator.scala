@@ -48,7 +48,7 @@ object Interpolator {
         if (Param.matches(query))
           replaceNext(query.replaceFirst(Param.regex, "?"), acc :+ Param.findFirstMatchIn(query).get.group(1))
         else
-          (query, acc.zipWithIndex.toMap)
+          (query, acc.zipWithIndex.map(t => t._1 -> (t._2 + 1)).toMap)
 
       replaceNext(query, Seq())
     }
