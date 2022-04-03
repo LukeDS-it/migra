@@ -2,7 +2,7 @@ package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
-import it.ldsoftware.starling.engine.util.Interpolator.StringInterpolator
+import it.ldsoftware.starling.extensions.Interpolator.StringInterpolator
 import it.ldsoftware.starling.engine.util.ReflectionFactory
 import slick.jdbc.JdbcBackend._
 import slick.jdbc._

@@ -1,6 +1,6 @@
 package it.ldsoftware.starling.engine.util
 
-import it.ldsoftware.starling.engine.util.Interpolator._
+import it.ldsoftware.starling.extensions.Interpolator._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

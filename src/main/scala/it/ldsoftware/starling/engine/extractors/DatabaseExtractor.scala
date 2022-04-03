@@ -2,8 +2,9 @@ package it.ldsoftware.starling.engine.extractors
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.extractors.DatabaseExtractor.resultSetToList
-import it.ldsoftware.starling.engine.util.Interpolator._
-import it.ldsoftware.starling.extensions.UsableExtensions.LetOperations
+import it.ldsoftware.starling.extensions.Interpolator._
+import it.ldsoftware.starling.extensions.DatabaseExtensions
+import it.ldsoftware.starling.extensions.UsableExtensions.{LetOperations, UsableConnection}
 import slick.jdbc._
 
 import java.sql.{Connection, ResultSet}
@@ -15,13 +16,15 @@ class DatabaseExtractor(query: String, conn: Connection, params: Extracted = Map
 ) extends Extractor {
 
   override def extract(): Future[Seq[ExtractionResult]] =
-    Future(conn.prepareNamedStatement(query, params))
-      .map(_.executeQuery())
-      .map(resultSetToList)
-      .map(_.map(Right(_)))
-      .recover {
-        case exc => Seq(Left(exc.toString))
-      }
+    conn.use { it =>
+      Future(it.prepareNamedStatement(query, params))
+        .map(_.executeQuery())
+        .map(resultSetToList)
+        .map(_.map(Right(_)))
+        .recover {
+          case exc => Seq(Left(exc.toString))
+        }
+    }
 
   override def toPipedExtractor(data: Extracted): Extractor =
     new DatabaseExtractor(query, conn, data)
@@ -31,10 +34,10 @@ class DatabaseExtractor(query: String, conn: Connection, params: Extracted = Map
 object DatabaseExtractor extends ExtractorBuilder {
 
   override def apply(config: Config, pc: ProcessContext): Extractor = {
-//    val (query, db, profile) = ReflectionFactory.getDbInfo(config)
-//    implicit val executionContext: ExecutionContext = pc.executionContext
-//    new DatabaseExtractor(query, db, profile)
-    ???
+    val query = config.getString("query")
+    val conn = DatabaseExtensions.getConnection(config)
+    implicit val executionContext: ExecutionContext = pc.executionContext
+    new DatabaseExtractor(query, conn)
   }
 
   def resultSetToList(rs: ResultSet): Seq[Extracted] =

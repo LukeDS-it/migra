@@ -3,7 +3,7 @@ package it.ldsoftware.starling.engine.consumers
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.starling.engine._
-import it.ldsoftware.starling.engine.util.Interpolator._
+import it.ldsoftware.starling.extensions.Interpolator._
 
 import scala.concurrent.{ExecutionContext, Future}
 

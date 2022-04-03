@@ -1,6 +1,7 @@
 package it.ldsoftware.starling.engine.util
 
 import com.typesafe.config.{Config, ConfigFactory}
+import it.ldsoftware.starling.extensions.CredentialManager
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc._
 

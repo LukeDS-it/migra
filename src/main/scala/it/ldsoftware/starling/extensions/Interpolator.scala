@@ -1,4 +1,4 @@
-package it.ldsoftware.starling.engine.util
+package it.ldsoftware.starling.extensions
 
 import freemarker.template.{Configuration, Template, Version}
 import it.ldsoftware.starling.engine.Extracted
@@ -8,7 +8,7 @@ import slick.jdbc.{PositionedParameters, SQLActionBuilder}
 import java.io.{StringReader, StringWriter}
 import java.sql.{Connection, PreparedStatement}
 import scala.annotation.tailrec
-import scala.jdk.CollectionConverters._
+import scala.compat.java8.FunctionConverters.enrichAsJavaFunction
 
 object Interpolator {
 

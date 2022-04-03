@@ -8,9 +8,9 @@ import akka.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.extractors.HttpExtractor.AuthMethod
-import it.ldsoftware.starling.engine.util.CredentialManager
-import it.ldsoftware.starling.engine.util.Interpolator.StringInterpolator
+import it.ldsoftware.starling.extensions.Interpolator.StringInterpolator
 import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
+import it.ldsoftware.starling.extensions.CredentialManager
 import it.ldsoftware.starling.extensions.JacksonExtension._
 
 import scala.concurrent.{ExecutionContext, Future}

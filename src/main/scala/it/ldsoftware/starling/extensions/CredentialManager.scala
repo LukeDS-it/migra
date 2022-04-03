@@ -1,8 +1,8 @@
-package it.ldsoftware.starling.engine.util
+package it.ldsoftware.starling.extensions
 
 import com.typesafe.config.{Config, ConfigFactory}
-import it.ldsoftware.starling.extensions.ConfigExtensions._
-import it.ldsoftware.starling.extensions.UsableExtensions._
+import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
+import it.ldsoftware.starling.extensions.UsableExtensions.UsableSource
 
 import scala.io.Source
 
