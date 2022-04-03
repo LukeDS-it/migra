@@ -2,23 +2,20 @@ package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
-import it.ldsoftware.starling.extensions.Interpolator.StringInterpolator
-import it.ldsoftware.starling.engine.util.ReflectionFactory
-import slick.jdbc.JdbcBackend._
-import slick.jdbc._
+import it.ldsoftware.starling.extensions.DatabaseExtensions
+import it.ldsoftware.starling.extensions.Interpolator.ExtendedConnection
+import it.ldsoftware.starling.extensions.UsableExtensions.UsableConnection
 
+import java.sql.Connection
 import scala.concurrent.{ExecutionContext, Future}
 
-//noinspection SqlDialectInspection,SqlNoDataSourceInspection
-class DatabaseConsumer(query: String, db: Database, profile: JdbcProfile)(implicit val ec: ExecutionContext)
+class DatabaseConsumer(query: String, conn: Connection)(implicit val ec: ExecutionContext)
     extends Consumer {
 
-  import profile.api._
-
-  override def consumeSuccess(data: Extracted): Future[ConsumerResult] = {
-    val update = query <-- data
-    db.run(sqlu"#$update")
-      .map(u => Consumed(s"DatabaseConsumer - $u rows affected by: $update"))
+  override def consumeSuccess(data: Extracted): Future[ConsumerResult] = conn.use { it =>
+    Future(it.prepareNamedStatement(query, data))
+      .map(_.executeUpdate())
+      .map(u => Consumed(s"DatabaseConsumer - $u rows affected by: $query"))
   }
 
 }
@@ -26,9 +23,10 @@ class DatabaseConsumer(query: String, db: Database, profile: JdbcProfile)(implic
 object DatabaseConsumer extends ConsumerBuilder {
 
   override def apply(config: Config, pc: ProcessContext): DatabaseConsumer = {
-    val (query, db, profile) = ReflectionFactory.getDbInfo(config)
+    val query = config.getString("query")
+    val conn = DatabaseExtensions.getConnection(config)
     implicit val executionContext: ExecutionContext = pc.executionContext
-    new DatabaseConsumer(query, db, profile)
+    new DatabaseConsumer(query, conn)
   }
 
 }

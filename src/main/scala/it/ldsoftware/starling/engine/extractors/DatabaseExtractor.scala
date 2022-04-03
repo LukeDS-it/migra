@@ -10,7 +10,6 @@ import slick.jdbc._
 import java.sql.{Connection, ResultSet}
 import scala.concurrent.{ExecutionContext, Future}
 
-//noinspection SqlDialectInspection,SqlNoDataSourceInspection
 class DatabaseExtractor(query: String, conn: Connection, params: Extracted = Map())(implicit
     val ec: ExecutionContext
 ) extends Extractor {
