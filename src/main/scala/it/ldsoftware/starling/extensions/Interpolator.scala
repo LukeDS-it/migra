@@ -8,7 +8,7 @@ import slick.jdbc.{PositionedParameters, SQLActionBuilder}
 import java.io.{StringReader, StringWriter}
 import java.sql.{Connection, PreparedStatement}
 import scala.annotation.tailrec
-import scala.compat.java8.FunctionConverters.enrichAsJavaFunction
+import scala.jdk.CollectionConverters.MapHasAsJava
 
 object Interpolator {
 
