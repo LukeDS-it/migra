@@ -16,4 +16,11 @@ object UsableExtensions {
     def let[P](action: T => P): P = action(any)
   }
 
+  implicit class MutateOperations[T](any: T) {
+    def mutate(action: T => Unit): T = {
+      action(any)
+      any
+    }
+  }
+
 }
