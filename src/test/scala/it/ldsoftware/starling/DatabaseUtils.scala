@@ -1,29 +1,10 @@
-package it.ldsoftware.starling.engine.util
+package it.ldsoftware.starling
 
-import com.typesafe.config.{Config, ConfigFactory}
-import it.ldsoftware.starling.extensions.CredentialManager
+import com.typesafe.config.ConfigFactory
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc._
 
-object ReflectionFactory {
-
-  def getBuilder[T](fullyQualifiedClassName: String): T = {
-    val mirror = scala.reflect.runtime.universe.runtimeMirror(getClass.getClassLoader)
-    val module = mirror.staticModule(fullyQualifiedClassName)
-    mirror.reflectModule(module).instance.asInstanceOf[T]
-  }
-
-  def getDbInfo(config: Config): (String, JdbcBackend.Database, JdbcProfile) = {
-    val query = config.getString("query")
-    val jdbcUrl = config.getString("jdbc-url")
-    val jdbcDriver = config.getString("jdbc-driver")
-    val (username, password) = CredentialManager.getCredentials(config)
-
-    val profile = getProfile(jdbcDriver)
-    val db = getDatabase(jdbcUrl, jdbcDriver, username, password)
-
-    (query, db, profile)
-  }
+object DatabaseUtils {
 
   def getDatabase(jdbcUrl: String, jdbcDriver: String, user: String = null, password: String = null): Database = {
     val ifUser = if (user != null) s"user = $user" else ""

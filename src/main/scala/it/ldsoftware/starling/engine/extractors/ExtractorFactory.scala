@@ -1,8 +1,7 @@
 package it.ldsoftware.starling.engine.extractors
 
 import com.typesafe.config.Config
-import it.ldsoftware.starling.engine.util.ReflectionFactory
-import it.ldsoftware.starling.engine.{Extractor, ExtractorBuilder, ProcessContext}
+import it.ldsoftware.starling.engine.{Extractor, ExtractorBuilder, ProcessContext, getBuilder}
 import it.ldsoftware.starling.extensions.ConfigExtensions._
 
 object ExtractorFactory {
@@ -15,7 +14,7 @@ object ExtractorFactory {
     config.getConfigSList(ExtractorPath).map { c =>
       val cType = c.getString(ExtractorTypePath)
       val cName = s"it.ldsoftware.starling.engine.extractors.$cType"
-      val builder = ReflectionFactory.getBuilder[ExtractorBuilder](cName)
+      val builder = getBuilder[ExtractorBuilder](cName)
       builder(c.getConfig(ExtractorConfigPath), pc)
     }
 

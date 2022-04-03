@@ -1,8 +1,7 @@
 package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.Config
-import it.ldsoftware.starling.engine.util.ReflectionFactory
-import it.ldsoftware.starling.engine.{Consumer, ConsumerBuilder, ProcessContext}
+import it.ldsoftware.starling.engine.{Consumer, ConsumerBuilder, ProcessContext, getBuilder}
 import it.ldsoftware.starling.extensions.ConfigExtensions._
 
 object ConsumerFactory {
@@ -15,7 +14,7 @@ object ConsumerFactory {
     config.getConfigSList(ConsumersPath).map { c =>
       val cType = c.getString(ConsumersTypePath)
       val cName = s"it.ldsoftware.starling.engine.consumers.$cType"
-      val builder = ReflectionFactory.getBuilder[ConsumerBuilder](cName)
+      val builder = getBuilder[ConsumerBuilder](cName)
       builder(c.getConfig(ConsumersConfigPath), pc)
     }
 

@@ -1,5 +1,6 @@
 package it.ldsoftware.starling.engine.util
 
+import it.ldsoftware.starling.DatabaseUtils
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -15,7 +16,7 @@ class ReflectionFactoryIntSpec extends AnyWordSpec with Matchers with ScalaFutur
 
     "return a database connection" in {
       val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)}"
-      val db = ReflectionFactory.getDatabase(jdbcUrl, jdbcDriver)
+      val db = DatabaseUtils.getDatabase(jdbcUrl, jdbcDriver)
 
       db.run(sql"select 1 from dual".as[Int]).futureValue shouldBe Vector(1)
     }
@@ -24,7 +25,7 @@ class ReflectionFactoryIntSpec extends AnyWordSpec with Matchers with ScalaFutur
       val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)}"
       val user = "username"
       val pass = "password"
-      val db = ReflectionFactory.getDatabase(jdbcUrl, jdbcDriver, user, pass)
+      val db = DatabaseUtils.getDatabase(jdbcUrl, jdbcDriver, user, pass)
 
       db.run(sql"select 1 from dual".as[Int]).futureValue shouldBe Vector(1)
     }

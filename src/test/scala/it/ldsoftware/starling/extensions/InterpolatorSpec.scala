@@ -1,4 +1,4 @@
-package it.ldsoftware.starling.engine.util
+package it.ldsoftware.starling.extensions
 
 import it.ldsoftware.starling.extensions.Interpolator._
 import org.scalamock.scalatest.MockFactory

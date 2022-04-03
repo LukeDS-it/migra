@@ -1,7 +1,6 @@
-package it.ldsoftware.starling.engine.util
+package it.ldsoftware.starling.extensions
 
 import com.typesafe.config.ConfigFactory
-import it.ldsoftware.starling.extensions.CredentialManager
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

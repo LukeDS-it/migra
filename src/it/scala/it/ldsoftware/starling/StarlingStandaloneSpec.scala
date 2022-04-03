@@ -2,7 +2,6 @@ package it.ldsoftware.starling
 
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.engine.util.ReflectionFactory
 import it.ldsoftware.starling.extensions.UsableExtensions.UsableSource
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
@@ -26,7 +25,7 @@ class StarlingStandaloneSpec
   import slick.jdbc.H2Profile.api._
 
   private val jdbcUrl = "jdbc:h2:mem:integration;DB_CLOSE_ON_EXIT=FALSE"
-  val db = ReflectionFactory.getDatabase(jdbcUrl, "org.h2.Driver")
+  val db = DatabaseUtils.getDatabase(jdbcUrl, "org.h2.Driver")
 
   private val dbSetup = db.run(
     DBIO.seq(

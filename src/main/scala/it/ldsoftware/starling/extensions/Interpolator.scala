@@ -42,7 +42,7 @@ object Interpolator {
 
     private val Param = """:([\w\d]*)""".r.unanchored
 
-    private[util] def getPositionalQuery(query: String): (String, Map[String, Int]) = {
+    private[extensions] def getPositionalQuery(query: String): (String, Map[String, Int]) = {
 
       @tailrec def replaceNext(query: String, acc: Seq[String]): (String, Map[String, Int]) =
         if (Param.matches(query))
