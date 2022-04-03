@@ -10,7 +10,7 @@ import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.engine.ProcessContext
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.GivenWhenThen
+import org.scalatest.{BeforeAndAfterEach, GivenWhenThen}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -23,7 +23,8 @@ class OAuth2TokenProviderSpec
     with Matchers
     with MockFactory
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with BeforeAndAfterEach {
 
   private val wireMock = new WireMockServer(wireMockConfig().dynamicPort())
   wireMock.start()
@@ -31,6 +32,10 @@ class OAuth2TokenProviderSpec
 
   private val system = ActorSystem("test-oauth2-provider")
   private val pc = ProcessContext(system)
+
+  override def beforeEach(): Unit = {
+    wireMock.resetAll()
+  }
 
   "token" should {
     "get the token from an oauth2 endpoint implementation" in {
