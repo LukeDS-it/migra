@@ -15,14 +15,15 @@ class DatabaseExtractor(query: String, conn: Connection, params: Extracted = Map
 ) extends Extractor {
 
   override def extract(): Future[Seq[ExtractionResult]] =
-    conn.use { it =>
-      Future(it.prepareNamedStatement(query, params))
-        .map(_.executeQuery())
-        .map(resultSetToList)
-        .map(_.map(Right(_)))
-        .recover {
-          case exc => Seq(Left(exc.toString))
-        }
+    Future {
+      conn.use { it =>
+        it.prepareNamedStatement(query, params)
+          .let(_.executeQuery())
+          .let(resultSetToList)
+          .let(_.map(Right(_)))
+      }
+    }.recover {
+      case exc => Seq(Left(exc.toString))
     }
 
   override def toPipedExtractor(data: Extracted): Extractor =
