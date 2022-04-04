@@ -2,7 +2,7 @@ package it.ldsoftware.starling
 
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.extensions.UsableExtensions.UsableSource
+import it.ldsoftware.starling.extensions.UsableExtensions.UsableCloseable
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.featurespec.AnyFeatureSpec

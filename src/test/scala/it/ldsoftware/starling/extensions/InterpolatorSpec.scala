@@ -46,7 +46,7 @@ class InterpolatorSpec extends AnyWordSpec with Matchers with MockFactory {
 
       val testQuery = "insert into table values (:id, :name, :surname, :phoneNumber);"
       val expectedQuery = "insert into table values (?, ?, ?, ?);"
-      val expectedParams = Map("id" -> 0, "name" -> 1, "surname" -> 2, "phoneNumber" -> 3)
+      val expectedParams = Map("id" -> 1, "name" -> 2, "surname" -> 3, "phoneNumber" -> 4)
 
       val subject = new ExtendedConnection(connection)
       val (query, params) = subject.getPositionalQuery(testQuery)
