@@ -1,4 +1,4 @@
-package it.ldsoftware.starling.engine.util
+package it.ldsoftware.starling.extensions
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.matchers.should.Matchers

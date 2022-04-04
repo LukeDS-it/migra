@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.stream.scaladsl.{RunnableGraph, Sink}
 import com.typesafe.scalalogging.LazyLogging
-import it.ldsoftware.starling.extensions.UsableExtensions.UsableSource
+import it.ldsoftware.starling.extensions.UsableExtensions.UsableCloseable
 
 import java.io.{File, PrintWriter}
 import java.time.LocalDateTime

@@ -1,19 +1,24 @@
 package it.ldsoftware.starling.extensions
 
-import scala.io.Source
-
 object UsableExtensions {
 
-  implicit class UsableSource(source: Source) {
-    def use[T](action: Source => T): T = {
-      val result = action(source)
-      source.close()
+  implicit class UsableCloseable[C <: AutoCloseable](closeable: C) {
+    def use[T](action: C => T): T = {
+      val result = action(closeable)
+      closeable.close()
       result
     }
   }
 
   implicit class LetOperations[T](any: T) {
     def let[P](action: T => P): P = action(any)
+  }
+
+  implicit class MutateOperations[T](any: T) {
+    def mutate(action: T => Unit): T = {
+      action(any)
+      any
+    }
   }
 
 }

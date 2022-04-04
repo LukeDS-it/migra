@@ -1,8 +1,7 @@
 package it.ldsoftware.starling.engine.providers
 
 import com.typesafe.config.Config
-import it.ldsoftware.starling.engine.util.ReflectionFactory
-import it.ldsoftware.starling.engine.{ProcessContext, TokenProvider, TokenProviderBuilder}
+import it.ldsoftware.starling.engine.{ProcessContext, TokenProvider, TokenProviderBuilder, getBuilder}
 import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
 
 object TokenProviderFactory {
@@ -16,7 +15,7 @@ object TokenProviderFactory {
     config.getConfigSList(TokenProviderPath).map { c =>
       val cType = c.getString(TokenProviderTypePath)
       val cName = s"it.ldsoftware.starling.engine.providers.$cType"
-      val builder = ReflectionFactory.getBuilder[TokenProviderBuilder](cName)
+      val builder = getBuilder[TokenProviderBuilder](cName)
       builder(c.getString(TokenProviderNamePath), c.getConfig(TokenProviderConfigPath), pc)
     }
 

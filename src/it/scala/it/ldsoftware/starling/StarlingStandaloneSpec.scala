@@ -2,8 +2,7 @@ package it.ldsoftware.starling
 
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.engine.util.ReflectionFactory
-import it.ldsoftware.starling.extensions.UsableExtensions.UsableSource
+import it.ldsoftware.starling.extensions.UsableExtensions.UsableCloseable
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.featurespec.AnyFeatureSpec
@@ -26,7 +25,7 @@ class StarlingStandaloneSpec
   import slick.jdbc.H2Profile.api._
 
   private val jdbcUrl = "jdbc:h2:mem:integration;DB_CLOSE_ON_EXIT=FALSE"
-  val db = ReflectionFactory.getDatabase(jdbcUrl, "org.h2.Driver")
+  val db = DatabaseUtils.getDatabase(jdbcUrl, "org.h2.Driver")
 
   private val dbSetup = db.run(
     DBIO.seq(
@@ -70,9 +69,9 @@ class StarlingStandaloneSpec
         val log = Source.fromFile(generated(0)).use(_.getLines().toList)
 
         log should contain allElementsOf Seq(
-          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('steak')",
-          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('bread')",
-          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('yogurt')"
+          """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> steak)""",
+          """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> bread)""",
+          """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> yogurt)"""
         )
 
       }

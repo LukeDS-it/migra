@@ -1,10 +1,13 @@
-package it.ldsoftware.starling.engine.util
+package it.ldsoftware.starling.extensions
 
-import it.ldsoftware.starling.engine.util.Interpolator._
+import it.ldsoftware.starling.extensions.Interpolator._
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class InterpolatorSpec extends AnyWordSpec with Matchers {
+import java.sql.Connection
+
+class InterpolatorSpec extends AnyWordSpec with Matchers with MockFactory {
 
   "The main interpolator" should {
 
@@ -35,7 +38,22 @@ class InterpolatorSpec extends AnyWordSpec with Matchers {
         "others" -> "another string that must be interpolated"
       )
     }
+  }
 
+  "The connection interpolator" should {
+    "Create a positional query from a named query" in {
+      val connection = mock[Connection]
+
+      val testQuery = "insert into table values (:id, :name, :surname, :phoneNumber);"
+      val expectedQuery = "insert into table values (?, ?, ?, ?);"
+      val expectedParams = Map("id" -> 1, "name" -> 2, "surname" -> 3, "phoneNumber" -> 4)
+
+      val subject = new ExtendedConnection(connection)
+      val (query, params) = subject.getPositionalQuery(testQuery)
+
+      query shouldBe expectedQuery
+      params shouldBe expectedParams
+    }
   }
 
 }

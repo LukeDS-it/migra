@@ -1,11 +1,14 @@
-package it.ldsoftware.starling.engine.util
+package it.ldsoftware.starling.extensions
 
 import freemarker.template.{Configuration, Template, Version}
 import it.ldsoftware.starling.engine.Extracted
+import it.ldsoftware.starling.extensions.UsableExtensions.MutateOperations
 import slick.jdbc.{PositionedParameters, SQLActionBuilder}
 
 import java.io.{StringReader, StringWriter}
-import scala.jdk.CollectionConverters._
+import java.sql.{Connection, PreparedStatement}
+import scala.annotation.tailrec
+import scala.jdk.CollectionConverters.MapHasAsJava
 
 object Interpolator {
 
@@ -33,6 +36,30 @@ object Interpolator {
         case x: String => x <-- data
         case x         => x
       }.toMap
+  }
+
+  implicit class ExtendedConnection(connection: Connection) {
+
+    private val Param = """:([\w\d]*)""".r.unanchored
+
+    private[extensions] def getPositionalQuery(query: String): (String, Map[String, Int]) = {
+
+      @tailrec def replaceNext(query: String, acc: Seq[String]): (String, Map[String, Int]) =
+        if (Param.matches(query))
+          replaceNext(query.replaceFirst(Param.regex, "?"), acc :+ Param.findFirstMatchIn(query).get.group(1))
+        else
+          (query, acc.zipWithIndex.map(t => t._1 -> (t._2 + 1)).toMap)
+
+      replaceNext(query, Seq())
+    }
+
+    def prepareNamedStatement(query: String, params: Extracted): PreparedStatement =
+      getPositionalQuery(query) match {
+        case (positional, paramMap) =>
+          paramMap.foldLeft(connection.prepareStatement(positional)) {
+            case (ps, next) => ps.mutate(_.setObject(next._2, params(next._1)))
+          }
+      }
   }
 
   implicit class SlickInterpolator(a: SQLActionBuilder) {

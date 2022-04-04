@@ -2,8 +2,8 @@ package it.ldsoftware.starling.engine.extractors
 
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
+import it.ldsoftware.starling.DatabaseUtils
 import it.ldsoftware.starling.engine.ProcessContext
-import it.ldsoftware.starling.engine.util.ReflectionFactory
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -19,7 +19,7 @@ class DatabaseExtractorIntSpec extends AnyWordSpec with Matchers with ScalaFutur
 
   private val pc = ProcessContext(ActorSystem("test"))
   private val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"
-  private val db = ReflectionFactory.getDatabase(jdbcUrl, "org.h2.Driver")
+  private val db = DatabaseUtils.getDatabase(jdbcUrl, "org.h2.Driver")
 
   private val execute = db.run(
     DBIO.seq(
