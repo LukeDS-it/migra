@@ -4,11 +4,22 @@ import com.typesafe.config.Config
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import it.ldsoftware.starling.extensions.UsableExtensions.{LetOperations, MutateOperations}
 
-import java.sql.Connection
+import javax.sql.DataSource
+import scala.collection.mutable
 
 object DatabaseExtensions {
 
-  def getConnection(config: Config): Connection =
+  private val dataSources = mutable.Map[String, DataSource]()
+
+  def getDataSource(config: Config): DataSource = {
+    val jdbcUrl = config.getString("jdbc-url")
+    if (!dataSources.contains(jdbcUrl)) {
+      dataSources.put(jdbcUrl, makeDataSource(config))
+    }
+    dataSources(jdbcUrl)
+  }
+
+  private def makeDataSource(config: Config): DataSource =
     new HikariConfig()
       .mutate { cfg =>
         cfg.setJdbcUrl(config.getString("jdbc-url"))
@@ -22,6 +33,5 @@ object DatabaseExtensions {
       .let { cfg =>
         new HikariDataSource(cfg)
       }
-      .getConnection
 
 }

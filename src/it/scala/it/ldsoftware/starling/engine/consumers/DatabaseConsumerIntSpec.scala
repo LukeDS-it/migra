@@ -61,7 +61,7 @@ class DatabaseConsumerIntSpec
       val extracted = Map("newPrice" -> expectedPrice, "targetProduct" -> "steak")
 
       subject.consumeSuccess(extracted).futureValue shouldBe Consumed(
-        "DatabaseConsumer - 1 rows affected by: update products set price = :newPrice where name = :targetProduct"
+        s"DatabaseConsumer - 1 rows affected by update products set price = :newPrice where name = :targetProduct with values Map(newPrice -> $expectedPrice, targetProduct -> steak)"
       )
 
       eventually {

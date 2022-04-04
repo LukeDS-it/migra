@@ -2,7 +2,7 @@ package it.ldsoftware.starling.extensions
 
 import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
-import it.ldsoftware.starling.extensions.UsableExtensions.UsableSource
+import it.ldsoftware.starling.extensions.UsableExtensions.UsableCloseable
 
 import scala.io.Source
 

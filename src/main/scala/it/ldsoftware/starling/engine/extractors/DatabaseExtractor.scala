@@ -2,21 +2,22 @@ package it.ldsoftware.starling.engine.extractors
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.extractors.DatabaseExtractor.resultSetToList
-import it.ldsoftware.starling.extensions.Interpolator._
 import it.ldsoftware.starling.extensions.DatabaseExtensions
-import it.ldsoftware.starling.extensions.UsableExtensions.{LetOperations, UsableConnection}
+import it.ldsoftware.starling.extensions.Interpolator._
+import it.ldsoftware.starling.extensions.UsableExtensions.{LetOperations, UsableCloseable}
 import slick.jdbc._
 
-import java.sql.{Connection, ResultSet}
+import java.sql.ResultSet
+import javax.sql.DataSource
 import scala.concurrent.{ExecutionContext, Future}
 
-class DatabaseExtractor(query: String, conn: Connection, params: Extracted = Map())(implicit
-    val ec: ExecutionContext
+class DatabaseExtractor(query: String, ds: DataSource, params: Extracted = Map())(implicit
+                                                                                  val ec: ExecutionContext
 ) extends Extractor {
 
   override def extract(): Future[Seq[ExtractionResult]] =
     Future {
-      conn.use { it =>
+      ds.getConnection.use { it =>
         it.prepareNamedStatement(query, params)
           .let(_.executeQuery())
           .let(resultSetToList)
@@ -27,7 +28,7 @@ class DatabaseExtractor(query: String, conn: Connection, params: Extracted = Map
     }
 
   override def toPipedExtractor(data: Extracted): Extractor =
-    new DatabaseExtractor(query, conn, data)
+    new DatabaseExtractor(query, ds, data)
 
 }
 
@@ -35,7 +36,7 @@ object DatabaseExtractor extends ExtractorBuilder {
 
   override def apply(config: Config, pc: ProcessContext): Extractor = {
     val query = config.getString("query")
-    val conn = DatabaseExtensions.getConnection(config)
+    val conn = DatabaseExtensions.getDataSource(config)
     implicit val executionContext: ExecutionContext = pc.executionContext
     new DatabaseExtractor(query, conn)
   }

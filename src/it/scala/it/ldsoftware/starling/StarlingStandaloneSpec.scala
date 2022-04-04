@@ -69,9 +69,9 @@ class StarlingStandaloneSpec
         val log = Source.fromFile(generated(0)).use(_.getLines().toList)
 
         log should contain allElementsOf Seq(
-          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('steak')",
-          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('bread')",
-          "DatabaseConsumer - 1 rows affected by: insert into bought (name) values('yogurt')"
+          """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> steak)""",
+          """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> bread)""",
+          """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> yogurt)"""
         )
 
       }
