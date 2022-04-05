@@ -1,7 +1,7 @@
 package it.ldsoftware.starling.engine.extractors
 
 import com.typesafe.config.Config
-import it.ldsoftware.starling.engine.{Extractor, ExtractorBuilder, ProcessContext, getBuilder}
+import it.ldsoftware.starling.engine.{getBuilder, Extractor, ExtractorBuilder, ProcessContext}
 import it.ldsoftware.starling.extensions.ConfigExtensions._
 
 object ExtractorFactory {

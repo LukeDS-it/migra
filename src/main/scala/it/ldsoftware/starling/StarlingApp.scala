@@ -1,9 +1,11 @@
 package it.ldsoftware.starling
 
+import akka.actor.typed.ActorSystem
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.starling.configuration.AppConfig
 import it.ldsoftware.starling.engine.ProcessRunner
+import it.ldsoftware.starling.server.ServerBehavior
 
 import java.io.File
 
@@ -19,7 +21,9 @@ object StarlingApp extends App with LazyLogging {
       case _                        => throw new Error("STARLING_MODE env var not found!")
     }
 
-  private def processServer(config: AppConfig): Unit = {}
+  private def processServer(config: AppConfig): Unit = {
+    val system = ActorSystem[Nothing](ServerBehavior(config), "starling-studio")
+  }
 
   private def processStandalone(args: Array[String]): Unit = {
     logger.info("Starting in standalone mode")

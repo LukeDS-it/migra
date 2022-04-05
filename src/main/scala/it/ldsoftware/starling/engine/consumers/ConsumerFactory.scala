@@ -1,7 +1,7 @@
 package it.ldsoftware.starling.engine.consumers
 
 import com.typesafe.config.Config
-import it.ldsoftware.starling.engine.{Consumer, ConsumerBuilder, ProcessContext, getBuilder}
+import it.ldsoftware.starling.engine.{getBuilder, Consumer, ConsumerBuilder, ProcessContext}
 import it.ldsoftware.starling.extensions.ConfigExtensions._
 
 object ConsumerFactory {

@@ -1,7 +1,7 @@
 package it.ldsoftware.starling.engine.providers
 
 import com.typesafe.config.Config
-import it.ldsoftware.starling.engine.{ProcessContext, TokenProvider, TokenProviderBuilder, getBuilder}
+import it.ldsoftware.starling.engine.{getBuilder, ProcessContext, TokenProvider, TokenProviderBuilder}
 import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
 
 object TokenProviderFactory {

@@ -232,7 +232,7 @@ class HttpExtractorSpec
       And("response data")
       //language=JSON
       val json =
-      """
+        """
           |{
           |  "strField": "string",
           |  "intField": 10
