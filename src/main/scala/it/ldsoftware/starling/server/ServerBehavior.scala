@@ -25,9 +25,7 @@ object ServerBehavior extends LazyLogging {
       Behaviors.empty
     }
 
-  private def startHttpServer(routes: Route, port: Int)(implicit
-                                                        system: ActorSystem[_]
-  ): Unit = {
+  private def startHttpServer(routes: Route, port: Int)(implicit system: ActorSystem[_]): Unit = {
     import system.executionContext
 
     Http().newServerAt(AllInterfaces, port).bind(routes).onComplete {
