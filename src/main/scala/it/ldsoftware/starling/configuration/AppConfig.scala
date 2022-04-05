@@ -8,6 +8,10 @@ case class AppConfig(private val config: Config) {
 
   lazy val serverPort: Int = config.getInt("it.ldsoftware.starling.server.port")
 
+  lazy val dbUrl: String = config.getString("it.ldsoftware.starling.server.database.url")
+  lazy val dbUser: String = config.getString("it.ldsoftware.starling.server.database.user")
+  lazy val dbPass: String = config.getString("it.ldsoftware.starling.server.database.pass")
+
 }
 
 object AppConfig {
