@@ -10,6 +10,7 @@ import akka.persistence.query.PersistenceQuery
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.starling.configuration.AppConfig
 import it.ldsoftware.starling.http.HealthRoutes
+import it.ldsoftware.starling.persistence.Process
 
 import scala.util.{Failure, Success}
 
@@ -21,10 +22,7 @@ object ServerBehavior extends LazyLogging {
     Behaviors.setup[Nothing] { context =>
       val system = context.system
 
-      val sharding = ClusterSharding(system)
-
-      val readJournal = PersistenceQuery(system.classicSystem)
-        .readJournalFor[JdbcReadJournal](JdbcReadJournal.Identifier)
+      Process.init(system)
 
       new Migrations(appConfig).migrate()
 
