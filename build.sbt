@@ -19,6 +19,7 @@ val scalamockVersion = "5.2.0"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+  "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 )

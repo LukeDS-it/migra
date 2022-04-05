@@ -12,7 +12,7 @@ import javax.sql.DataSource
 import scala.concurrent.{ExecutionContext, Future}
 
 class DatabaseExtractor(query: String, ds: DataSource, params: Extracted = Map())(implicit
-                                                                                  val ec: ExecutionContext
+    val ec: ExecutionContext
 ) extends Extractor {
 
   override def extract(): Future[Seq[ExtractionResult]] =
