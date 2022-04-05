@@ -22,7 +22,7 @@ object StarlingApp extends App with LazyLogging {
     }
 
   private def processServer(config: AppConfig): Unit = {
-    val system = ActorSystem[Nothing](ServerBehavior(config), "starling-studio")
+    ActorSystem[Nothing](ServerBehavior(config), "starling-studio")
   }
 
   private def processStandalone(args: Array[String]): Unit = {

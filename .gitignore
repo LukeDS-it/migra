@@ -9,3 +9,5 @@
 .bsp/
 target/
 *.executed*
+
+/test-utils/postgres/data

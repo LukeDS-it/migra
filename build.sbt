@@ -1,5 +1,6 @@
 val akkaVersion = "2.6.19"
 val akkaHttpVersion = "10.2.9"
+val akkaJdbcVersion = "3.5.3"
 val slickVersion = "3.3.3"
 val mysqlVersion = "8.0.28"
 val h2Version = "2.1.210"
@@ -16,19 +17,28 @@ val jsonPathVersion = "2.7.0"
 val jacksonVersion = "2.13.2"
 val wiremockVersion = "2.32.0"
 val scalamockVersion = "5.2.0"
+val postgresqlVersion = "42.3.3"
+val flywayVersion = "8.5.4"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+  "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion,
+  "com.typesafe.akka" %% "akka-cluster-sharding-typed" % akkaVersion,
+  "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
+  "com.typesafe.akka" %% "akka-serialization-jackson" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+  "com.github.dnvriend" %% "akka-persistence-jdbc" % akkaJdbcVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
 )
 
 val database = Seq(
   "com.typesafe.slick" %% "slick" % slickVersion,
   "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
+  "org.flywaydb" % "flyway-core" % flywayVersion,
   "mysql" % "mysql-connector-java" % mysqlVersion,
-  "com.h2database" % "h2" % h2Version
+  "com.h2database" % "h2" % h2Version,
+  "org.postgresql" % "postgresql" % postgresqlVersion
 )
 val logging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
@@ -56,7 +66,12 @@ val testDep = Seq(
   "org.scalactic" %% "scalactic" % scalacticVersion % "test,it",
   "org.scalatest" %% "scalatest" % scalacticVersion % "test,it",
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % Test,
-  "org.scalamock" %% "scalamock" % scalamockVersion % Test
+  "org.scalamock" %% "scalamock" % scalamockVersion % Test,
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
+  "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
+  "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
+  "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
+  "com.typesafe.akka" %% "akka-persistence-testkit" % akkaVersion % Test,
 )
 
 lazy val root = (project in file("."))
