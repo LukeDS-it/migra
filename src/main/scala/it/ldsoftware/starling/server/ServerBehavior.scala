@@ -1,20 +1,19 @@
 package it.ldsoftware.starling.server
 
-import akka.actor.typed.{ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.{ActorSystem, Behavior}
 import akka.cluster.sharding.typed.scaladsl.ClusterSharding
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Route
-import akka.persistence.jdbc.query.scaladsl.JdbcReadJournal
-import akka.persistence.query.PersistenceQuery
+import akka.http.scaladsl.server.{Directives, Route}
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.http.HealthRoutes
-import it.ldsoftware.starling.persistence.Process
+import it.ldsoftware.starling.server.http.{HealthRoutes, ProcessRoutes}
+import it.ldsoftware.starling.server.persistence.Process
+import it.ldsoftware.starling.server.services.ProcessService
 
 import scala.util.{Failure, Success}
 
-object ServerBehavior extends LazyLogging {
+object ServerBehavior extends LazyLogging with Directives {
 
   private val AllInterfaces = "0.0.0.0"
 
@@ -24,9 +23,11 @@ object ServerBehavior extends LazyLogging {
 
       Process.init(system)
 
+      val sharding = ClusterSharding(system)
+
       new Migrations(appConfig).migrate()
 
-      val allRoutes = HealthRoutes()
+      val allRoutes = HealthRoutes() ~ ProcessRoutes(new ProcessService(sharding))
       startHttpServer(allRoutes, appConfig.serverPort)(system)
 
       Behaviors.empty

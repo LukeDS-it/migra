@@ -1,10 +1,10 @@
-package it.ldsoftware.starling.persistence
+package it.ldsoftware.starling.server.persistence
 
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
 import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, Entity, EntityTypeKey}
 import akka.persistence.typed.PersistenceId
 import akka.persistence.typed.scaladsl.EventSourcedBehavior
-import it.ldsoftware.starling.persistence.serialization.CborSerializable
+import it.ldsoftware.starling.server.persistence.serialization.CborSerializable
 
 object Process {
 
