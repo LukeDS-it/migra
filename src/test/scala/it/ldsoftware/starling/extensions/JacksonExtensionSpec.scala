@@ -17,7 +17,6 @@ class JacksonExtensionSpec extends AnyWordSpec with Matchers {
           |}
           |""".stripMargin
 
-
       json.asMap shouldBe Map("string" -> "abc", "num" -> 123)
     }
   }

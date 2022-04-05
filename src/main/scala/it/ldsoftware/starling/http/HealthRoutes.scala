@@ -7,9 +7,10 @@ class HealthRoutes extends Directives {
 
   def routes: Route = healthRoute
 
-  private def healthRoute = path("health") {
-    complete((StatusCodes.OK, "OK"))
-  }
+  private def healthRoute =
+    path("health") {
+      complete((StatusCodes.OK, "OK"))
+    }
 
 }
 
