@@ -4,13 +4,12 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.stream.scaladsl.{RunnableGraph, Sink}
 import com.typesafe.scalalogging.LazyLogging
-import it.ldsoftware.starling.extensions.UsableExtensions.UsableCloseable
+import it.ldsoftware.starling.extensions.IOExtensions.FileFromFileExtensions
 
 import java.io.{File, PrintWriter}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
-import scala.io.Source
 import scala.util.{Failure, Success}
 
 class ProcessRunner extends LazyLogging {
@@ -23,7 +22,7 @@ class ProcessRunner extends LazyLogging {
     if (!file.exists()) {
       logger.error(s"Specified file ${file.getAbsolutePath} does not exist")
     } else {
-      val manifest = Source.fromFile(file).use(_.getLines().mkString("\n"))
+      val manifest = file.readFile
       logger.debug(s"Executing following plan:\n$manifest")
       val pc = ProcessContext(system)
 

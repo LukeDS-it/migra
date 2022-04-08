@@ -35,16 +35,20 @@ trait Extractor {
   def doExtract(): Future[Seq[ExtractionResult]]
 
   def extract(): Future[Seq[ExtractionResult]] =
-    doExtract().map { seq =>
-      seq.map {
-        case Right(value) =>
-          extractionMode match {
-            case Merge   => Right(value.concat(initialValue))
-            case Replace => Right(value)
-          }
-        case x => x
+    doExtract()
+      .map { seq =>
+        seq.map {
+          case Right(value) =>
+            extractionMode match {
+              case Merge   => Right(value.concat(initialValue))
+              case Replace => Right(value)
+            }
+          case x => x
+        }
       }
-    }
+      .recover {
+        case exc => Seq(Left(exc.toString))
+      }
 
   /**
     * This function must return a new instance of the extractor, using extracted data as
