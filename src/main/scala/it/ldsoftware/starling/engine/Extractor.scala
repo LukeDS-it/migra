@@ -2,6 +2,7 @@ package it.ldsoftware.starling.engine
 
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine.extractors.FailFastExtractor
+import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -11,6 +12,18 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 trait Extractor {
 
+  val config: Config
+  val initialValue: Extracted
+
+  private lazy val extractionMode: ExtractionMode =
+    config
+      .getOptString("mode")
+      .map {
+        case "merge" => Merge
+        case _       => Replace
+      }
+      .getOrElse(Replace)
+
   implicit val ec: ExecutionContext
 
   /**
@@ -19,7 +32,19 @@ trait Extractor {
     * @return a [[Future]] containing a sequence of [[ExtractionResult]] that will be passed
     *         along the stream
     */
-  def extract(): Future[Seq[ExtractionResult]]
+  def doExtract(): Future[Seq[ExtractionResult]]
+
+  def extract(): Future[Seq[ExtractionResult]] =
+    doExtract().map { seq =>
+      seq.map {
+        case Right(value) =>
+          extractionMode match {
+            case Merge   => Right(value.concat(initialValue))
+            case Replace => Right(value)
+          }
+        case x => x
+      }
+    }
 
   /**
     * This function must return a new instance of the extractor, using extracted data as
@@ -33,7 +58,7 @@ trait Extractor {
 
   final def piped(result: ExtractionResult): Extractor =
     result match {
-      case Left(value)  => new FailFastExtractor(value)
+      case Left(value)  => new FailFastExtractor(value, config)
       case Right(value) => toPipedExtractor(value)
     }
 
@@ -56,3 +81,8 @@ trait ExtractorBuilder {
   def apply(config: Config, pc: ProcessContext): Extractor
 
 }
+
+sealed trait ExtractionMode
+
+case object Merge extends ExtractionMode
+case object Replace extends ExtractionMode

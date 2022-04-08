@@ -15,12 +15,19 @@ import it.ldsoftware.starling.extensions.JacksonExtension._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HttpExtractor(url: String, subPath: Option[String], auth: AuthMethod, http: HttpExt)(implicit
+class HttpExtractor(
+    url: String,
+    subPath: Option[String],
+    auth: AuthMethod,
+    http: HttpExt,
+    override val config: Config,
+    override val initialValue: Extracted
+)(implicit
     val ec: ExecutionContext,
     mat: Materializer
 ) extends Extractor {
 
-  override def extract(): Future[Seq[ExtractionResult]] =
+  override def doExtract(): Future[Seq[ExtractionResult]] =
     auth.toHeaders
       .map(headers => HttpRequest(uri = url, headers = headers))
       .flatMap(r => http.singleRequest(r))
@@ -32,7 +39,7 @@ class HttpExtractor(url: String, subPath: Option[String], auth: AuthMethod, http
       }
 
   override def toPipedExtractor(data: Extracted): Extractor =
-    new HttpExtractor(url <-- data, subPath, auth, http)
+    new HttpExtractor(url <-- data, subPath, auth, http, config, data)
 
 }
 
@@ -60,7 +67,7 @@ object HttpExtractor extends ExtractorBuilder {
     implicit val executionContext: ExecutionContext = pc.executionContext
     implicit val materializer: Materializer = pc.materializer
 
-    new HttpExtractor(url, subPath, auth, pc.http)
+    new HttpExtractor(url, subPath, auth, pc.http, config, Map())
   }
 
   private def extractAuth(config: Config, pc: ProcessContext): AuthMethod = {

@@ -15,7 +15,7 @@ import scala.util.{Failure, Success}
 
 class ProcessRunner extends LazyLogging {
 
-  private val system = ActorSystem("standalone-system")
+  private val system = ActorSystem("starling-studio")
   implicit val ec: ExecutionContextExecutor = ExecutionContext.global
   implicit val mat: Materializer = Materializer(system)
 
