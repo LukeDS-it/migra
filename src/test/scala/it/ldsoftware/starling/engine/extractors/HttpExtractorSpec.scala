@@ -57,7 +57,7 @@ class HttpExtractorSpec
 
       val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
-      subject.doExtract().futureValue shouldBe expected
+      subject.extract().futureValue shouldBe expected
     }
 
     "get a sub-property of the response as list of extraction result" in {
@@ -93,7 +93,7 @@ class HttpExtractorSpec
 
       val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
-      subject.doExtract().futureValue shouldBe expected
+      subject.extract().futureValue shouldBe expected
     }
 
     "get a sub-property of the response as extraction result" in {
@@ -126,7 +126,7 @@ class HttpExtractorSpec
 
       val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
-      subject.doExtract().futureValue shouldBe Seq(Right(expected))
+      subject.extract().futureValue shouldBe Seq(Right(expected))
     }
 
     "call URLs with basic auth credentials" in {
@@ -165,7 +165,7 @@ class HttpExtractorSpec
 
       val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
-      subject.doExtract().futureValue shouldBe expected
+      subject.extract().futureValue shouldBe expected
 
       verify(getRequestedFor(urlEqualTo("/")).withBasicAuth(new BasicCredentials("user", "pass")))
     }
@@ -205,7 +205,7 @@ class HttpExtractorSpec
 
       val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
-      subject.doExtract().futureValue shouldBe expected
+      subject.extract().futureValue shouldBe expected
 
       verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer token")))
     }
@@ -249,7 +249,7 @@ class HttpExtractorSpec
       val subject = HttpExtractor(ConfigFactory.parseString(config), withCaches)
 
       When("extracting the data")
-      subject.doExtract().futureValue shouldBe expected
+      subject.extract().futureValue shouldBe expected
 
       Then("the request should have the token in the authorization header")
       verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer token")))
