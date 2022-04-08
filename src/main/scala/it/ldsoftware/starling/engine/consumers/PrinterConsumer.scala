@@ -4,6 +4,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.extensions.Interpolator._
+import it.ldsoftware.starling.extensions.UsableExtensions.LetOperations
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -11,8 +12,10 @@ class PrinterConsumer(template: String)(implicit val ec: ExecutionContext) exten
 
   override def consumeSuccess(data: Extracted): Future[ConsumerResult] =
     Future {
-      logger.info(template <-- data)
-      Consumed("PrinterConsumer")
+      (template <-- data).let { it =>
+        logger.info(it)
+        Consumed(s"PrinterConsumer printed $it")
+      }
     }
 
 }

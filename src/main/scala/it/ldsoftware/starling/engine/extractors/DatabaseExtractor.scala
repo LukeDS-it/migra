@@ -11,14 +11,19 @@ import java.sql.ResultSet
 import javax.sql.DataSource
 import scala.concurrent.{ExecutionContext, Future}
 
-class DatabaseExtractor(query: String, ds: DataSource, params: Extracted = Map())(implicit
+class DatabaseExtractor(
+    query: String,
+    ds: DataSource,
+    override val config: Config,
+    override val initialValue: Extracted = Map()
+)(implicit
     val ec: ExecutionContext
 ) extends Extractor {
 
-  override def extract(): Future[Seq[ExtractionResult]] =
+  override def doExtract(): Future[Seq[ExtractionResult]] =
     Future {
       ds.getConnection.use { it =>
-        it.prepareNamedStatement(query, params)
+        it.prepareNamedStatement(query, initialValue)
           .let(_.executeQuery())
           .let(resultSetToList)
           .let(_.map(Right(_)))
@@ -28,7 +33,7 @@ class DatabaseExtractor(query: String, ds: DataSource, params: Extracted = Map()
     }
 
   override def toPipedExtractor(data: Extracted): Extractor =
-    new DatabaseExtractor(query, ds, data)
+    new DatabaseExtractor(query, ds, config, data)
 
 }
 
@@ -38,7 +43,7 @@ object DatabaseExtractor extends ExtractorBuilder {
     val query = config.getString("query")
     val conn = DatabaseExtensions.getDataSource(config)
     implicit val executionContext: ExecutionContext = pc.executionContext
-    new DatabaseExtractor(query, conn)
+    new DatabaseExtractor(query, conn, config)
   }
 
   def resultSetToList(rs: ResultSet): Seq[Extracted] =

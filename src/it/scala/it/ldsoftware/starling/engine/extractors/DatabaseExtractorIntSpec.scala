@@ -53,7 +53,7 @@ class DatabaseExtractorIntSpec extends AnyWordSpec with Matchers with ScalaFutur
 
       val subject = DatabaseExtractor(ConfigFactory.parseString(config), pc)
 
-      subject.extract().futureValue should contain allElementsOf Seq(steak, broth, bread, yogurt)
+      subject.doExtract().futureValue should contain allElementsOf Seq(steak, broth, bread, yogurt)
     }
 
   }
