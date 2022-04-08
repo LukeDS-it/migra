@@ -28,8 +28,6 @@ class DatabaseExtractor(
           .let(resultSetToList)
           .let(_.map(Right(_)))
       }
-    }.recover {
-      case exc => Seq(Left(exc.toString))
     }
 
   override def toPipedExtractor(data: Extracted): Extractor =

@@ -2,6 +2,7 @@ package it.ldsoftware.starling.extensions
 
 import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
+import it.ldsoftware.starling.extensions.IOExtensions.FileFromStringExtensions
 import it.ldsoftware.starling.extensions.UsableExtensions.UsableCloseable
 
 import scala.io.Source
@@ -21,9 +22,7 @@ object CredentialManager {
         case "env" =>
           (System.getenv(config.getString("credentials.user")), System.getenv(config.getString("credentials.pass")))
         case "file" =>
-          Source.fromFile(config.getString("credentials.file")).use { it =>
-            getPlainCredentials(ConfigFactory.parseString(it.getLines().mkString("\n")))
-          }
+          getPlainCredentials(ConfigFactory.parseString(config.getString("credentials.file").readFile))
       }
     }
 
@@ -39,9 +38,7 @@ object CredentialManager {
         case "env" =>
           System.getenv(config.getString("credentials.token"))
         case "file" =>
-          Source.fromFile(config.getString("credentials.file")).use { it =>
-            getPlainToken(ConfigFactory.parseString(it.getLines().mkString("\n")))
-          }
+          getPlainToken(ConfigFactory.parseString(config.getString("credentials.file").readFile))
       }
     }
 
