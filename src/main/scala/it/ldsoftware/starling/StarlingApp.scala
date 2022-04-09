@@ -17,7 +17,7 @@ object StarlingApp extends App with LazyLogging {
   def run(config: AppConfig, args: Array[String]): Unit =
     config.getMode match {
       case AppConfig.ServerMode     => processServer(config)
-      case AppConfig.StandaloneMode => processStandalone(args)
+      case AppConfig.StandaloneMode => processStandalone(config, args)
       case _                        => throw new Error("STARLING_MODE env var not found!")
     }
 
@@ -25,11 +25,11 @@ object StarlingApp extends App with LazyLogging {
     ActorSystem[Nothing](ServerBehavior(config), "starling-studio")
   }
 
-  private def processStandalone(args: Array[String]): Unit = {
+  private def processStandalone(config: AppConfig, args: Array[String]): Unit = {
     logger.info("Starting in standalone mode")
     Option(args.head).map(new File(_)) match {
       case None       => logger.error("No descriptor provided, quitting.")
-      case Some(file) => new ProcessRunner().startProcessFromFile(file)
+      case Some(file) => new ProcessRunner().startProcessFromFile(file, config)
     }
   }
 

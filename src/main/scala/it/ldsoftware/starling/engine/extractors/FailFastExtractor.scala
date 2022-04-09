@@ -20,4 +20,5 @@ class FailFastExtractor(message: String, override val config: Config, override v
   override def toPipedExtractor(data: Extracted): Extractor =
     new FailFastExtractor(message, config)
 
+  override def summary: String = "Will never be used"
 }

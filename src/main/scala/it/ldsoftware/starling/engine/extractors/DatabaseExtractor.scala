@@ -33,6 +33,9 @@ class DatabaseExtractor(
   override def toPipedExtractor(data: Extracted): Extractor =
     new DatabaseExtractor(query, ds, config, data)
 
+  override def summary: String =
+    s"Database extractor trying to execute $query interpolated with $initialValue"
+
 }
 
 object DatabaseExtractor extends ExtractorBuilder {

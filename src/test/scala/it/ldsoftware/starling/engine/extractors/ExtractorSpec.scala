@@ -2,12 +2,14 @@ package it.ldsoftware.starling.engine.extractors
 
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
+import it.ldsoftware.starling.configuration.AppConfig
 import it.ldsoftware.starling.engine.ProcessContext
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpec
 
-class ExtractorSpec extends AnyWordSpec with should.Matchers with ScalaFutures with IntegrationPatience {
+class ExtractorSpec extends AnyWordSpec with should.Matchers with ScalaFutures with IntegrationPatience with MockFactory {
 
   "an extractor" should {
     "emit new data when the configuration does not specify anything" in {
@@ -25,7 +27,7 @@ class ExtractorSpec extends AnyWordSpec with should.Matchers with ScalaFutures w
       val data = Map("old" -> "value")
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"))
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("extracted" -> "template string")))
@@ -46,7 +48,7 @@ class ExtractorSpec extends AnyWordSpec with should.Matchers with ScalaFutures w
       val data = Map("old" -> "value")
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"))
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("extracted" -> "template string")))
@@ -67,7 +69,7 @@ class ExtractorSpec extends AnyWordSpec with should.Matchers with ScalaFutures w
       val data = Map("old" -> "value")
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"))
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
 
       val expected = Map("old" -> "value", "extracted" -> "template string")

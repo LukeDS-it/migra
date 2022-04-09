@@ -2,6 +2,7 @@ package it.ldsoftware.starling.engine.extractors
 
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
+import it.ldsoftware.starling.configuration.AppConfig
 import it.ldsoftware.starling.engine.ProcessContext
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.GivenWhenThen
@@ -34,7 +35,7 @@ class ScalaEvalExtractorSpec
           |}""".stripMargin
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"))
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
       val extractor = ExtractorFactory.getExtractors(c, pc).head
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))
@@ -58,7 +59,7 @@ class ScalaEvalExtractorSpec
       val initialData = Map("element" -> "value")
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"))
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(initialData)
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))
@@ -82,7 +83,7 @@ class ScalaEvalExtractorSpec
       val initialData = Map("element" -> "value")
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"))
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(initialData)
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))
