@@ -68,7 +68,7 @@ val testDep = Seq(
   "org.scalactic" %% "scalactic" % scalacticVersion % "test,it",
   "org.scalatest" %% "scalatest" % scalacticVersion % "test,it",
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % Test,
-  "org.scalamock" %% "scalamock" % scalamockVersion % Test,
+  "org.scalamock" %% "scalamock" % scalamockVersion % "test,it",
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
