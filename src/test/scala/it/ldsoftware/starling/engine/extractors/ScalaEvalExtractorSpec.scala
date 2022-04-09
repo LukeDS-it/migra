@@ -1,7 +1,7 @@
 package it.ldsoftware.starling.engine.extractors
 
 import akka.actor.ActorSystem
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.starling.configuration.AppConfig
 import it.ldsoftware.starling.engine.ProcessContext
 import org.scalamock.scalatest.MockFactory
@@ -34,8 +34,13 @@ class ScalaEvalExtractorSpec
           |  ]
           |}""".stripMargin
 
+      val mockConfig = mock[Config]
+      val appConfig = AppConfig(mockConfig)
+
+      (mockConfig.getInt _).expects("it.ldsoftware.starling.max-script-engines").returning(4)
+
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
+      val pc = ProcessContext(ActorSystem("test"), appConfig)
       val extractor = ExtractorFactory.getExtractors(c, pc).head
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))
@@ -58,8 +63,13 @@ class ScalaEvalExtractorSpec
 
       val initialData = Map("element" -> "value")
 
+      val mockConfig = mock[Config]
+      val appConfig = AppConfig(mockConfig)
+
+      (mockConfig.getInt _).expects("it.ldsoftware.starling.max-script-engines").returning(4)
+
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
+      val pc = ProcessContext(ActorSystem("test"), appConfig)
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(initialData)
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))
@@ -82,8 +92,13 @@ class ScalaEvalExtractorSpec
 
       val initialData = Map("element" -> "value")
 
+      val mockConfig = mock[Config]
+      val appConfig = AppConfig(mockConfig)
+
+      (mockConfig.getInt _).expects("it.ldsoftware.starling.max-script-engines").returning(4)
+
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
+      val pc = ProcessContext(ActorSystem("test"), appConfig)
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(initialData)
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))
