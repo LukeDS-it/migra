@@ -4,28 +4,36 @@ import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.extractors.ScalaEvalExtractor.CallToFunction
 import it.ldsoftware.starling.extensions.IOExtensions.FileFromStringExtensions
+import it.ldsoftware.starling.extensions.ScriptEngineExtensions.ScriptEnginePool
 
-import javax.script.ScriptEngineManager
 import scala.concurrent.{ExecutionContext, Future}
 
-class ScalaEvalExtractor(script: String, override val config: Config, override val initialValue: Extracted = Map())(
-    implicit val ec: ExecutionContext
+class ScalaEvalExtractor(
+    script: String,
+    enginePool: ScriptEnginePool,
+    override val config: Config,
+    override val initialValue: Extracted = Map()
+)(implicit
+    val ec: ExecutionContext
 ) extends Extractor {
 
   override def doExtract(): Future[Seq[ExtractionResult]] =
-    Future(new ScriptEngineManager().getEngineByName("scala"))
+    enginePool.getFreeEngine
       .map { engine =>
-        engine.put("initialValue", initialValue)
-        engine.eval(script)
-        engine.eval(CallToFunction).asInstanceOf[Extracted]
+        engine.execute { e =>
+          e.put("initialValue", initialValue)
+          e.eval(script)
+          e.eval(CallToFunction).asInstanceOf[Extracted]
+        }
       }
       .map { it =>
         Seq(Right(it))
       }
 
   override def toPipedExtractor(data: Extracted): Extractor =
-    new ScalaEvalExtractor(script, config, data)
+    new ScalaEvalExtractor(script, enginePool, config, data)
 
+  override def summary: String = s"ScalaEvalExtractor failed to execute script with data $initialValue"
 }
 
 object ScalaEvalExtractor extends ExtractorBuilder {
@@ -45,8 +53,11 @@ object ScalaEvalExtractor extends ExtractorBuilder {
       case "file"   => config.getString("file").readFile
       case x        => throw new Error(s"Cannot handle script of type $x")
     }
+    implicit val ec: ExecutionContext = pc.executionContext
 
-    new ScalaEvalExtractor(script, config)(pc.executionContext)
+    val enginePool = new ScriptEnginePool("scala", pc.appConfig)
+
+    new ScalaEvalExtractor(script, enginePool, config)
   }
 
 }

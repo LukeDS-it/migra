@@ -34,7 +34,24 @@ trait Extractor {
     */
   def doExtract(): Future[Seq[ExtractionResult]]
 
-  def extract(): Future[Seq[ExtractionResult]] =
+  /**
+    * This function must return a new instance of the extractor, using extracted data as
+    * additional configuration parameters.
+    * It may do so, for example, by interpolating the configuration parameters with the actual
+    * content of given data.
+    * @param data a single data extracted from the previous operation
+    * @return a copy of the current extractor, customized with data coming from upstream
+    */
+  def toPipedExtractor(data: Extracted): Extractor
+
+  /**
+    * This function must return the summary of the process. It is used by the basic extractor
+    * function to create process error information
+    * @return a string with the summary of the operations
+    */
+  def summary: String
+
+  final def extract(): Future[Seq[ExtractionResult]] =
     doExtract()
       .map { seq =>
         seq.map {
@@ -47,18 +64,8 @@ trait Extractor {
         }
       }
       .recover {
-        case exc => Seq(Left(exc.toString))
+        case exc => Seq(Left(s"${this.summary} ${exc.toString}"))
       }
-
-  /**
-    * This function must return a new instance of the extractor, using extracted data as
-    * additional configuration parameters.
-    * It may do so, for example, by interpolating the configuration parameters with the actual
-    * content of given data.
-    * @param data a single data extracted from the previous operation
-    * @return a copy of the current extractor, customized with data coming from upstream
-    */
-  def toPipedExtractor(data: Extracted): Extractor
 
   final def piped(result: ExtractionResult): Extractor =
     result match {

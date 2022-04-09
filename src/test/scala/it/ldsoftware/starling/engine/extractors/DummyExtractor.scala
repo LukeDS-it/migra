@@ -13,6 +13,8 @@ class DummyExtractor(val parameter: String, override val config: Config, overrid
     Future.successful(Seq(Right(Map("extracted" -> parameter))))
 
   override def toPipedExtractor(data: Extracted): Extractor = new DummyExtractor(parameter, config, data)
+
+  override def summary: String = "Dummy extractor failed"
 }
 
 object DummyExtractor extends ExtractorBuilder {

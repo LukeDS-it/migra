@@ -2,11 +2,13 @@ package it.ldsoftware.starling.engine.extractors
 
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
+import it.ldsoftware.starling.configuration.AppConfig
 import it.ldsoftware.starling.engine.ProcessContext
+import org.scalamock.scalatest.MockFactory
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class ExtractorFactorySpec extends AnyWordSpec with Matchers {
+class ExtractorFactorySpec extends AnyWordSpec with Matchers with MockFactory {
 
   // language=JSON
   private val config =
@@ -19,7 +21,7 @@ class ExtractorFactorySpec extends AnyWordSpec with Matchers {
 
     "build the correct extractor from a configuration" in {
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"))
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
       val extractors = ExtractorFactory.getExtractors(c, pc)
 
       extractors should have size 1

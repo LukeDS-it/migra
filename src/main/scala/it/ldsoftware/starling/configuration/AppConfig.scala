@@ -12,6 +12,9 @@ case class AppConfig(private val config: Config) {
   lazy val dbUser: String = config.getString("it.ldsoftware.starling.server.database.user")
   lazy val dbPass: String = config.getString("it.ldsoftware.starling.server.database.pass")
 
+  lazy val parallelism: Int = config.getInt("it.ldsoftware.starling.par-level")
+  lazy val maxScriptEngines: Int = config.getInt("it.ldsoftware.starling.max-script-engines")
+
 }
 
 object AppConfig {

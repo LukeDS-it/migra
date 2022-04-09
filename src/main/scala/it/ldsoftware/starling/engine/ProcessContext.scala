@@ -3,6 +3,7 @@ package it.ldsoftware.starling.engine
 import akka.actor.ActorSystem
 import akka.http.scaladsl.{Http, HttpExt}
 import akka.stream.Materializer
+import it.ldsoftware.starling.configuration.AppConfig
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
@@ -15,7 +16,7 @@ import scala.concurrent.ExecutionContext
   *
   * @param system the main actor system that is used to run the process
   */
-case class ProcessContext(system: ActorSystem, tokenCaches: mutable.Map[String, TokenProvider] = mutable.Map()) {
+case class ProcessContext(system: ActorSystem, appConfig: AppConfig, tokenCaches: mutable.Map[String, TokenProvider] = mutable.Map()) {
 
   lazy val materializer: Materializer = Materializer(system)
 

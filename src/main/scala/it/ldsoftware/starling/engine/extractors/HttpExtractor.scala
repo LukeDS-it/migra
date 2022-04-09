@@ -41,6 +41,7 @@ class HttpExtractor(
   override def toPipedExtractor(data: Extracted): Extractor =
     new HttpExtractor(url <-- data, subPath, auth, http, config, data)
 
+  override def summary: String = "HttpExtractor failed TODO"
 }
 
 object HttpExtractor extends ExtractorBuilder {
