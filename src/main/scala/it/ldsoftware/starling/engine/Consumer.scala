@@ -1,7 +1,10 @@
 package it.ldsoftware.starling.engine
 
 import com.typesafe.config.Config
+import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
 
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -11,6 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait Consumer {
 
   implicit val ec: ExecutionContext
+  val config: Config
 
   /**
     * Consumes the outcome of the extraction process. This function is called whenever
@@ -42,6 +46,11 @@ trait Consumer {
           case exc => NotConsumed(this.getClass.getSimpleName, exc.getMessage, Some(value), Some(exc))
         }
     }
+
+  final lazy val throttling =
+    config
+      .getOptDuration("throttle")
+      .map(d => FiniteDuration(d.toNanos, TimeUnit.NANOSECONDS))
 
 }
 

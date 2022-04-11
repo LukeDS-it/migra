@@ -18,14 +18,18 @@ class ProcessStream(extractors: List[Extractor], consumers: List[Consumer], parL
   lazy val pipe: List[Flow[ExtractionResult, ExtractionResult, NotUsed]] =
     extractors.tail
       .map { e =>
-        Flow[ExtractionResult]
+        e.throttling
+          .map(d => Flow[ExtractionResult].throttle(1, d))
+          .getOrElse(Flow[ExtractionResult])
           .mapAsync(parLevel)(rd => e.piped(rd).extract())
           .flatMapConcat(i => Source(i))
       }
 
   lazy val output: List[Flow[ExtractionResult, ConsumerResult, NotUsed]] =
     consumers.map { c =>
-      Flow[ExtractionResult]
+      c.throttling
+        .map(d => Flow[ExtractionResult].throttle(1, d))
+        .getOrElse(Flow[ExtractionResult])
         .mapAsync(parLevel)(rd => c.consume(rd))
     }
 

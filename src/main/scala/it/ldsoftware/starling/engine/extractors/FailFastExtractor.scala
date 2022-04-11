@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
   *
   * @param message message indicating the reason of the failure
   */
-class FailFastExtractor(message: String, override val config: Config, override val initialValue: Extracted = Map())(
+final class FailFastExtractor(message: String, override val config: Config, override val initialValue: Extracted = Map())(
     implicit val ec: ExecutionContext
 ) extends Extractor {
 

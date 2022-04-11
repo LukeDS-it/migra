@@ -9,7 +9,8 @@ import it.ldsoftware.starling.extensions.UsableExtensions.{LetOperations, Usable
 import javax.sql.DataSource
 import scala.concurrent.{ExecutionContext, Future}
 
-class DatabaseConsumer(query: String, ds: DataSource)(implicit val ec: ExecutionContext) extends Consumer {
+class DatabaseConsumer(query: String, ds: DataSource, override val config: Config)(implicit val ec: ExecutionContext)
+    extends Consumer {
 
   override def consumeSuccess(data: Extracted): Future[ConsumerResult] =
     Future {
@@ -28,7 +29,7 @@ object DatabaseConsumer extends ConsumerBuilder {
     val query = config.getString("query")
     val conn = DatabaseExtensions.getDataSource(config)
     implicit val executionContext: ExecutionContext = pc.executionContext
-    new DatabaseConsumer(query, conn)
+    new DatabaseConsumer(query, conn, config)
   }
 
 }

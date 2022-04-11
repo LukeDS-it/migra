@@ -27,7 +27,7 @@ class ProcessRunner extends LazyLogging {
       logger.debug(s"Executing following plan:\n$manifest")
       val pc = ProcessContext(system, appConfig)
 
-      val process = new ProcessFactory(4).generateProcess(manifest, pc)
+      val process = new ProcessFactory(appConfig.parallelism).generateProcess(manifest, pc)
 
       val loggerSink = Sink.fold[String, ConsumerResult]("") {
         case (acc, Consumed(info)) =>
