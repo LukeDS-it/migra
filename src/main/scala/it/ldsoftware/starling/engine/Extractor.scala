@@ -4,6 +4,8 @@ import com.typesafe.config.Config
 import it.ldsoftware.starling.engine.extractors.FailFastExtractor
 import it.ldsoftware.starling.extensions.ConfigExtensions.ConfigOperations
 
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -72,6 +74,11 @@ trait Extractor {
       case Left(value)  => new FailFastExtractor(value, config)
       case Right(value) => toPipedExtractor(value)
     }
+
+  final lazy val throttling =
+    config
+      .getOptDuration("throttle")
+      .map(d => FiniteDuration(d.toNanos, TimeUnit.NANOSECONDS))
 
 }
 
