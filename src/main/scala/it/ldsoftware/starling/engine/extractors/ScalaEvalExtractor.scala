@@ -3,7 +3,6 @@ package it.ldsoftware.starling.engine.extractors
 import com.typesafe.config.Config
 import it.ldsoftware.starling.engine._
 import it.ldsoftware.starling.engine.extractors.ScalaEvalExtractor.CallToFunction
-import it.ldsoftware.starling.extensions.IOExtensions.FileFromStringExtensions
 import it.ldsoftware.starling.extensions.ScriptEngineExtensions.ScriptEnginePool
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +49,7 @@ object ScalaEvalExtractor extends ExtractorBuilder {
   override def apply(config: Config, pc: ProcessContext): Extractor = {
     val script = config.getString("type") match {
       case "inline" => String.format(WrapperFunction, config.getString("script"))
-      case "file"   => config.getString("file").readFile
+      case "file"   => pc.retrieveFile(config.getString("file"))
       case x        => throw new Error(s"Cannot handle script of type $x")
     }
     implicit val ec: ExecutionContext = pc.executionContext

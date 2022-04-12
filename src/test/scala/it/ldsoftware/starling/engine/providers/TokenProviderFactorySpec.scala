@@ -3,7 +3,7 @@ package it.ldsoftware.starling.engine.providers
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.engine.ProcessContext
+import it.ldsoftware.starling.engine.{FileResolver, ProcessContext}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
@@ -22,7 +22,7 @@ class TokenProviderFactorySpec extends AnyWordSpec with Matchers with ScalaFutur
 
     "build the correct token provider from a configuration" in {
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
       val providers = TokenProviderFactory.getTokenProviders(c, pc)
 
       providers should have size 1

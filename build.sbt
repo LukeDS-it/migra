@@ -19,7 +19,7 @@ val wiremockVersion = "2.32.0"
 val scalamockVersion = "5.2.0"
 val postgresqlVersion = "42.3.3"
 val flywayVersion = "8.5.4"
-val projectScalaVersion = "2.13.8"
+val projectScalaVersion = "2.13.6"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,

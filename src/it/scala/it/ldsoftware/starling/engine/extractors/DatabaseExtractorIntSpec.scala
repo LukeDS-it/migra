@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.DatabaseUtils
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.engine.ProcessContext
+import it.ldsoftware.starling.engine.{FileResolver, ProcessContext}
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -24,7 +24,7 @@ class DatabaseExtractorIntSpec
 
   import slick.jdbc.H2Profile.api._
 
-  private val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
+  private val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
   private val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"
   private val db = DatabaseUtils.getDatabase(jdbcUrl, "org.h2.Driver")
 
