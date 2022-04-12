@@ -16,7 +16,12 @@ import scala.concurrent.ExecutionContext
   *
   * @param system the main actor system that is used to run the process
   */
-case class ProcessContext(system: ActorSystem, appConfig: AppConfig, tokenCaches: mutable.Map[String, TokenProvider] = mutable.Map()) {
+case class ProcessContext(
+    system: ActorSystem,
+    appConfig: AppConfig,
+    fileResolver: FileResolver,
+    tokenCaches: mutable.Map[String, TokenProvider] = mutable.Map()
+) {
 
   lazy val materializer: Materializer = Materializer(system)
 
@@ -27,5 +32,7 @@ case class ProcessContext(system: ActorSystem, appConfig: AppConfig, tokenCaches
   def getTokenCache(name: String): TokenProvider = tokenCaches(name)
 
   def addTokenCache(name: String, tokenProvider: TokenProvider): Unit = tokenCaches.put(name, tokenProvider)
+
+  def retrieveFile(name: String): String = fileResolver.retrieveFile(name)
 
 }

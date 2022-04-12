@@ -3,7 +3,6 @@ package it.ldsoftware.starling.extensions
 import freemarker.template.{Configuration, Template, Version}
 import it.ldsoftware.starling.engine.Extracted
 import it.ldsoftware.starling.extensions.UsableExtensions.MutateOperations
-import slick.jdbc.{PositionedParameters, SQLActionBuilder}
 
 import java.io.{StringReader, StringWriter}
 import java.sql.{Connection, PreparedStatement}
@@ -60,18 +59,6 @@ object Interpolator {
             case (ps, next) => ps.mutate(_.setObject(next._2, params(next._1)))
           }
       }
-  }
-
-  implicit class SlickInterpolator(a: SQLActionBuilder) {
-    def +(b: SQLActionBuilder): SQLActionBuilder = {
-      SQLActionBuilder(
-        a.queryParts ++ b.queryParts,
-        (p: Unit, pp: PositionedParameters) => {
-          a.unitPConv.apply(p, pp)
-          b.unitPConv.apply(p, pp)
-        }
-      )
-    }
   }
 
 }

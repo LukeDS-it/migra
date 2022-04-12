@@ -3,7 +3,7 @@ package it.ldsoftware.starling.engine.extractors
 import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.engine.ProcessContext
+import it.ldsoftware.starling.engine.{FileResolver, ProcessContext}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -40,7 +40,7 @@ class ScalaEvalExtractorSpec
       (mockConfig.getInt _).expects("it.ldsoftware.starling.max-script-engines").returning(4)
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), appConfig)
+      val pc = ProcessContext(ActorSystem("test"), appConfig, mock[FileResolver])
       val extractor = ExtractorFactory.getExtractors(c, pc).head
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))
@@ -69,7 +69,7 @@ class ScalaEvalExtractorSpec
       (mockConfig.getInt _).expects("it.ldsoftware.starling.max-script-engines").returning(4)
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), appConfig)
+      val pc = ProcessContext(ActorSystem("test"), appConfig, mock[FileResolver])
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(initialData)
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))
@@ -84,7 +84,7 @@ class ScalaEvalExtractorSpec
           |      "type":  "ScalaEvalExtractor",
           |      "config": {
           |         "type": "file",
-          |         "file": "./src/test/resources/testScript.scala"
+          |         "file": "testScript.scala"
           |      }
           |    }
           |  ]
@@ -95,10 +95,17 @@ class ScalaEvalExtractorSpec
       val mockConfig = mock[Config]
       val appConfig = AppConfig(mockConfig)
 
+      val fileResolver = mock[FileResolver]
+      val expectedScript =
+        """
+          |def produce(data: Map[String, Any]): Map[String, Any] = Map("element" -> data("element"))
+          |""".stripMargin
+
       (mockConfig.getInt _).expects("it.ldsoftware.starling.max-script-engines").returning(4)
+      (fileResolver.retrieveFile _).expects("testScript.scala").returning(expectedScript)
 
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), appConfig)
+      val pc = ProcessContext(ActorSystem("test"), appConfig, fileResolver)
       val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(initialData)
 
       extractor.extract().futureValue shouldBe Seq(Right(Map("element" -> "value")))

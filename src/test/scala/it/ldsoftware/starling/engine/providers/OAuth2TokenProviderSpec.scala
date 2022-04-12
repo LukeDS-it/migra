@@ -8,7 +8,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.Scenario
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.engine.ProcessContext
+import it.ldsoftware.starling.engine.{FileResolver, ProcessContext}
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, GivenWhenThen}
@@ -32,7 +32,7 @@ class OAuth2TokenProviderSpec
   WireMock.configureFor(wireMock.port())
 
   private val system = ActorSystem("test-oauth2-provider")
-  private val pc = ProcessContext(system, mock[AppConfig])
+  private val pc = ProcessContext(system, mock[AppConfig], mock[FileResolver])
 
   override def beforeEach(): Unit = {
     wireMock.resetAll()

@@ -7,7 +7,7 @@ import com.github.tomakehurst.wiremock.client.{BasicCredentials, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.engine.{ProcessContext, TokenProvider}
+import it.ldsoftware.starling.engine.{FileResolver, ProcessContext, TokenProvider}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -30,7 +30,7 @@ class HttpExtractorSpec
   WireMock.configureFor(wireMock.port())
 
   private val system = ActorSystem("test-http-extractor")
-  private val pc = ProcessContext(system, mock[AppConfig])
+  private val pc = ProcessContext(system, mock[AppConfig], mock[FileResolver])
 
   "extract" should {
     "get the whole response as extraction result" in {

@@ -5,6 +5,7 @@ import akka.stream.Materializer
 import akka.stream.scaladsl.{RunnableGraph, Sink}
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.starling.configuration.AppConfig
+import it.ldsoftware.starling.engine.resolvers.LocalFileResolver
 import it.ldsoftware.starling.extensions.IOExtensions.FileFromFileExtensions
 
 import java.io.{File, PrintWriter}
@@ -25,7 +26,7 @@ class ProcessRunner extends LazyLogging {
     } else {
       val manifest = file.readFile
       logger.debug(s"Executing following plan:\n$manifest")
-      val pc = ProcessContext(system, appConfig)
+      val pc = ProcessContext(system, appConfig, new LocalFileResolver(file))
 
       val process = new ProcessFactory(appConfig.parallelism).generateProcess(manifest, pc)
 

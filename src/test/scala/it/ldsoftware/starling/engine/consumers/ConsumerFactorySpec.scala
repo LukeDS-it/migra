@@ -3,7 +3,7 @@ package it.ldsoftware.starling.engine.consumers
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.starling.configuration.AppConfig
-import it.ldsoftware.starling.engine.ProcessContext
+import it.ldsoftware.starling.engine.{FileResolver, ProcessContext}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -21,7 +21,7 @@ class ConsumerFactorySpec extends AnyWordSpec with Matchers with MockFactory {
 
     "build the correct consumer from a configuration" in {
       val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig])
+      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
       val consumers = ConsumerFactory.getConsumers(c, pc)
 
       consumers should have size 1
