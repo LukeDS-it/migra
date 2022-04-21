@@ -81,9 +81,9 @@ lazy val root = (project in file("."))
   .settings(Defaults.itSettings)
   .settings(
     organization := "it.ldsoftware",
-    name := "starling-migrate",
+    name := "migra",
     scalaVersion := projectScalaVersion,
-    Compile / mainClass := Some("it.ldsoftware.starling.StarlingApp"),
+    Compile / mainClass := Some("it.ldsoftware.migra.MigraApp"),
     libraryDependencies ++= akka ++ database ++ logging ++ json ++ other ++ testDep,
     Test / fork := true,
     Test / envVars := Map(

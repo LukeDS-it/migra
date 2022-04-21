@@ -1,7 +1,7 @@
-# Starling
-[![build](https://github.com/LukeDS-it/starling-migrate/actions/workflows/push-on-master.yml/badge.svg?branch=master)](https://github.com/LukeDS-it/starling-migrate/actions/workflows/push-on-master.yml)
+# Migra
+[![build](https://github.com/LukeDS-it/migra/actions/workflows/push-on-master.yml/badge.svg?branch=master)](https://github.com/LukeDS-it/migra/actions/workflows/push-on-master.yml)
 
-Starling is an ETL tool made as an exercise with technologies such as Scala and
+Migra is an ETL tool made as an exercise with technologies such as Scala and
 the Akka framework.
 
 It aims to implement the most important functions of an ETL tool but keeping
@@ -28,13 +28,13 @@ A process can have any nymber of consumers set, and they will all run in paralle
 taking data from the last extractor.
 
 ## Building and using
-In this section you'll find all you need to get started with Starling.
+In this section you'll find all you need to get started with Migra.
 
 ### Building
 To build the project you need to be able to build projects with `sbt`.
 You can use either sbt via command line or IntelliJ IDEA (suggested).
 
 ### Running
-Starling provides the following modes
+Migra provides the following modes
 
 ## Roadmap
