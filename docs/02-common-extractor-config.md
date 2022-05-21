@@ -160,3 +160,58 @@ and obtain the following result:
   "name_band": "Spice Girls"
 }
 ```
+
+
+## Credentials
+
+Many extractors will let you specify credentials for the services you are accessing.
+
+While the configuration of credentials is in specific configuration keys for each extractor,
+you will always find that there will always be a `credentials` object nested in those
+configurations.
+
+Migra offers three way to put credentials in your extractors:
+
+- `plain`: you can specify the key in plain text. This is only recommended if you don't use
+           a public repository to save your JSON processes, or you don't care other people
+           seeing the credentials to your databases / services / whatnot
+- `file`: lets you specify a file that contains the credentials. This is also somewhat discouraged
+          as anyone accessing your file system will be able to look at the credentials.
+- `env`: lets you specify the name of an environment variable that will contain the credential
+         needed by the extractor. This is a safer alternative to the others one, and it's quite
+         secure, given that you may configure the environment variable just before launching the
+         process, or via other means that may be encrypted.
+
+Let's see examples of all three possible configurations:
+
+### Plain
+
+```json
+{
+  "credentials": {
+    "type": "plain",
+    "user": "username",
+    "pass": "password"
+  }
+}
+```
+
+### File
+
+```json
+{
+  "credentials": {
+    "type": "file",
+    "file": "/home/user/my-password-file"
+  }
+}
+```
+
+and the file will contain the following:
+
+```json
+{
+  "user": "username",
+  "pass": "password"
+}
+```
