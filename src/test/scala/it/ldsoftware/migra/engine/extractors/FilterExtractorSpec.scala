@@ -52,4 +52,36 @@ class FilterExtractorSpec  extends AnyWordSpec
     }
   }
 
+  "the filter extractor configured with not equals" should {
+    // language=JSON
+    val config =
+      """
+        |{
+        |  "property": "id",
+        |  "matcher": {
+        |     "op": "not equal",
+        |     "to": 1
+        |  }
+        |}
+        |""".stripMargin
+
+    "keep values that match the predicate" in {
+      val data = Map("id" -> 2)
+
+      val subject = FilterExtractor(ConfigFactory.parseString(config), pc)
+        .toPipedExtractor(data)
+
+      subject.extract().futureValue shouldBe Seq(Right(data))
+    }
+
+    "discard values that don't match the predicate" in {
+      val data = Map("id" -> 1)
+
+      val subject = FilterExtractor(ConfigFactory.parseString(config), pc)
+        .toPipedExtractor(data)
+
+      subject.extract().futureValue shouldBe Seq()
+    }
+  }
+
 }

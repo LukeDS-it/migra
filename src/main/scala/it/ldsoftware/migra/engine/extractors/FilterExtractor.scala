@@ -35,6 +35,20 @@ class FilterExtractor(
 
 object FilterExtractor extends ExtractorBuilder {
 
+  override def apply(config: Config, pc: ProcessContext): Extractor = {
+    val property = config.getString("property")
+    val matcher = config.getConfig("matcher").getString("op") match {
+      case "equals"    => new EqualsTo(config.getConfig("matcher").getAnyRef("to"))
+      case "not equal" => new NotEqualTo(config.getConfig("matcher").getAnyRef("to"))
+      case x           => throw new Error(s"Matcher for $x is not supported (yet?)")
+    }
+
+    implicit val executionContext: ExecutionContext = pc.executionContext
+    implicit val materializer: Materializer = pc.materializer
+
+    new FilterExtractor(property, matcher, config, Map())
+  }
+
   sealed trait Matcher {
     def matches(value: Any): Boolean
     def representation(value: Any): String
@@ -47,16 +61,10 @@ object FilterExtractor extends ExtractorBuilder {
       s"input ($value) must be equals to $other"
   }
 
-  override def apply(config: Config, pc: ProcessContext): Extractor = {
-    val property = config.getString("property")
-    val matcher = config.getConfig("matcher").getString("op") match {
-      case "equals" => new EqualsTo(config.getConfig("matcher").getAnyRef("to"))
-      case _        => throw new Error("Only equals matcher is supported for now")
-    }
+  class NotEqualTo(other: AnyRef) extends Matcher {
+    override def matches(value: Any): Boolean = !value.equals(other)
 
-    implicit val executionContext: ExecutionContext = pc.executionContext
-    implicit val materializer: Materializer = pc.materializer
-
-    new FilterExtractor(property, matcher, config, Map())
+    override def representation(value: Any): String =
+      s"input ($value) must be different from $other"
   }
 }
