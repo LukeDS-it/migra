@@ -26,6 +26,17 @@ trait Extractor {
       }
       .getOrElse(Replace)
 
+  private lazy val conflictResolution: ConflictResolution =
+    config.getOptConfig("conflict") match {
+      case Some(c) =>
+        c.getString("action") match {
+          case "prepend" => Prepend(c.getString("value"))
+          case "append"  => Append(c.getString("value"))
+          case _         => Substitute
+        }
+      case None => Substitute
+    }
+
   implicit val ec: ExecutionContext
 
   /**
@@ -59,7 +70,7 @@ trait Extractor {
         seq.map {
           case Right(value) =>
             extractionMode match {
-              case Merge   => Right(value.concat(initialValue))
+              case Merge   => Right(concatValues(initialValue, value))
               case Replace => Right(value)
             }
           case x => x
@@ -79,6 +90,21 @@ trait Extractor {
     config
       .getOptDuration("throttle")
       .map(d => FiniteDuration(d.toNanos, TimeUnit.NANOSECONDS))
+
+  private def concatValues(orig: Extracted, other: Extracted): Extracted =
+    orig.concat(
+      other
+        .map {
+          case (key, value) => if (orig.contains(key)) resolve(key) -> value else key -> value
+        }
+    )
+
+  private def resolve(key: String): String =
+    conflictResolution match {
+      case Substitute   => key
+      case Prepend(str) => s"$str$key"
+      case Append(str)  => s"$key$str"
+    }
 
 }
 
@@ -104,3 +130,9 @@ sealed trait ExtractionMode
 
 case object Merge extends ExtractionMode
 case object Replace extends ExtractionMode
+
+sealed trait ConflictResolution
+
+case object Substitute extends ConflictResolution
+case class Prepend(str: String) extends ConflictResolution
+case class Append(str: String) extends ConflictResolution

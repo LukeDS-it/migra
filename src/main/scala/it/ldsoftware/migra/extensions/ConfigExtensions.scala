@@ -20,5 +20,9 @@ object ConfigExtensions {
 
     def getOptDuration(path: String): Option[Duration] =
       if (config.hasPath(path)) Some(config.getDuration(path)) else None
+
+    def getOptConfig(path: String): Option[Config] =
+      if (config.hasPath(path)) Option(config.getConfig(path))
+      else None
   }
 }
