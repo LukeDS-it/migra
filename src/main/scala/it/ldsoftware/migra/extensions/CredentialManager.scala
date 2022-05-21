@@ -4,7 +4,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.migra.extensions.ConfigExtensions.ConfigOperations
 import it.ldsoftware.migra.extensions.IOExtensions.FileFromStringExtensions
 
-object CredentialManager {
+object CredentialManager { // TODO put in PC so that we can get file configuration from relative pos
 
   def getCredentials(config: Config): (String, String) =
     if (!config.hasPath("credentials")) {
