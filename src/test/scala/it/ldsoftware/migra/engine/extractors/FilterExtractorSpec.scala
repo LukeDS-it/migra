@@ -27,7 +27,7 @@ class FilterExtractorSpec  extends AnyWordSpec
         |{
         |  "property": "id",
         |  "matcher": {
-        |     "op": "equals",
+        |     "op": "==",
         |     "to": 1
         |  }
         |}
@@ -59,7 +59,7 @@ class FilterExtractorSpec  extends AnyWordSpec
         |{
         |  "property": "id",
         |  "matcher": {
-        |     "op": "not equal",
+        |     "op": "!=",
         |     "to": 1
         |  }
         |}
@@ -91,7 +91,7 @@ class FilterExtractorSpec  extends AnyWordSpec
         |{
         |  "property": "id",
         |  "matcher": {
-        |     "op": "greater than",
+        |     "op": ">",
         |     "to": 1
         |  }
         |}
@@ -123,7 +123,7 @@ class FilterExtractorSpec  extends AnyWordSpec
         |{
         |  "property": "id",
         |  "matcher": {
-        |     "op": "lower than",
+        |     "op": "<",
         |     "to": 2
         |  }
         |}
