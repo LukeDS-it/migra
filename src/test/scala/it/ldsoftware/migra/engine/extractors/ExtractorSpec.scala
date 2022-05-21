@@ -142,7 +142,8 @@ class ExtractorSpec
       extractor.extract().futureValue shouldBe Seq(Right(expected))
     }
 
-    "substitute a value when conflict resolving is Substitute" in { // language=JSON
+    "substitute a value when conflict resolving is Substitute" in {
+      // language=JSON
       val config =
         """{
           |  "extract":  [
