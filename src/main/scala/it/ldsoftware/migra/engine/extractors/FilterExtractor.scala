@@ -38,9 +38,11 @@ object FilterExtractor extends ExtractorBuilder {
   override def apply(config: Config, pc: ProcessContext): Extractor = {
     val property = config.getString("property")
     val matcher = config.getConfig("matcher").getString("op") match {
-      case "equals"    => new EqualsTo(config.getConfig("matcher").getAnyRef("to"))
-      case "not equal" => new NotEqualTo(config.getConfig("matcher").getAnyRef("to"))
-      case x           => throw new Error(s"Matcher for $x is not supported (yet?)")
+      case "equals"       => new EqualsTo(config.getConfig("matcher").getAnyRef("to"))
+      case "not equal"    => new NotEqualTo(config.getConfig("matcher").getAnyRef("to"))
+      case "greater than" => new GreaterThan(config.getConfig("matcher").getAnyRef("to"))
+      case "lower than"   => new LowerThan(config.getConfig("matcher").getAnyRef("to"))
+      case x              => throw new Error(s"Matcher for $x is not supported (yet?)")
     }
 
     implicit val executionContext: ExecutionContext = pc.executionContext
@@ -61,10 +63,26 @@ object FilterExtractor extends ExtractorBuilder {
       s"input ($value) must be equals to $other"
   }
 
-  class NotEqualTo(other: AnyRef) extends Matcher {
+  class NotEqualTo(other: Any) extends Matcher {
     override def matches(value: Any): Boolean = !value.equals(other)
 
     override def representation(value: Any): String =
       s"input ($value) must be different from $other"
+  }
+
+  class GreaterThan(other: Any) extends Matcher {
+    override def matches(value: Any): Boolean =
+      value.toString.compareTo(other.toString) > 0
+
+    override def representation(value: Any): String =
+      s"input ($value) must be greater than $other"
+  }
+
+  class LowerThan(other: Any) extends Matcher {
+    override def matches(value: Any): Boolean =
+      value.toString.compareTo(other.toString) < 0
+
+    override def representation(value: Any): String =
+      s"input ($value) must be lower than $other"
   }
 }
