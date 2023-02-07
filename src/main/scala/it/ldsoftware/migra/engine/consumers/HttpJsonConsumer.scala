@@ -12,9 +12,6 @@ import it.ldsoftware.migra.extensions.Interpolator._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
-  *
-  */
 class HttpJsonConsumer(
     url: String,
     jsonTemplate: String,
@@ -37,9 +34,8 @@ class HttpJsonConsumer(
     Future(json)
       .map(json => HttpEntity(MediaTypes.`application/json`, json))
       .zip(auth.toHeaders)
-      .map {
-        case (entity, headers) =>
-          HttpRequest(method, url <-- data, headers, entity)
+      .map { case (entity, headers) =>
+        HttpRequest(method, url <-- data, headers, entity)
       }
       .flatMap(r => http.singleRequest(r))
       .flatMap(r => Unmarshal(r).to[String].map(s => (r.status, s)))

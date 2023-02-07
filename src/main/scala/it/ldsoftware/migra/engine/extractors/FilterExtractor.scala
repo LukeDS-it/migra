@@ -38,7 +38,7 @@ object FilterExtractor extends ExtractorBuilder {
   override def apply(config: Config, pc: ProcessContext): Extractor = {
     val property = config.getString("property")
     val matcher = config.getConfig("matcher").getString("op") match {
-      case "=="  => new EqualsTo(config.getConfig("matcher").getAnyRef("to"))
+      case "==" => new EqualsTo(config.getConfig("matcher").getAnyRef("to"))
       case "!=" => new NotEqualTo(config.getConfig("matcher").getAnyRef("to"))
       case ">"  => new GreaterThan(config.getConfig("matcher").getAnyRef("to"))
       case "<"  => new LowerThan(config.getConfig("matcher").getAnyRef("to"))

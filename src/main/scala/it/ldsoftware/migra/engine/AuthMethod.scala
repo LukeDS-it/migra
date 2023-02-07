@@ -24,7 +24,7 @@ case class OAuth2Auth(tokenCache: TokenProvider) extends AuthMethod
 
 object AuthMethod {
 
-  def fromConfig(config: Config, pc: ProcessContext): AuthMethod = {
+  def fromConfig(config: Config, pc: ProcessContext): AuthMethod =
     if (config.hasPath("auth")) {
       val authConfig = config.getConfig("auth")
       authConfig.getString("type") match {
@@ -35,6 +35,5 @@ object AuthMethod {
     } else {
       NoAuth
     }
-  }
 
 }

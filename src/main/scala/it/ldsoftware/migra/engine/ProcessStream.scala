@@ -16,14 +16,13 @@ class ProcessStream(extractors: List[Extractor], consumers: List[Consumer], parL
   lazy val identity: Flow[ExtractionResult, ExtractionResult, NotUsed] = Flow[ExtractionResult]
 
   lazy val pipe: List[Flow[ExtractionResult, ExtractionResult, NotUsed]] =
-    extractors.tail
-      .map { e =>
-        e.throttling
-          .map(d => Flow[ExtractionResult].throttle(1, d))
-          .getOrElse(Flow[ExtractionResult])
-          .mapAsync(parLevel)(rd => e.piped(rd).extract())
-          .flatMapConcat(i => Source(i))
-      }
+    extractors.tail.map { e =>
+      e.throttling
+        .map(d => Flow[ExtractionResult].throttle(1, d))
+        .getOrElse(Flow[ExtractionResult])
+        .mapAsync(parLevel)(rd => e.piped(rd).extract())
+        .flatMapConcat(i => Source(i))
+    }
 
   lazy val output: List[Flow[ExtractionResult, ConsumerResult, NotUsed]] =
     consumers.map { c =>
@@ -37,8 +36,8 @@ class ProcessStream(extractors: List[Extractor], consumers: List[Consumer], parL
     GraphDSL.createGraph(sink) { implicit builder => sink =>
       import GraphDSL.Implicits._
 
-      val piped = pipe.foldLeft(input ~> identity) {
-        case (acc, next) => acc ~> next
+      val piped = pipe.foldLeft(input ~> identity) { case (acc, next) =>
+        acc ~> next
       }
 
       val mux = builder.add(Broadcast[ExtractionResult](output.size))

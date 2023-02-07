@@ -35,7 +35,7 @@ class HttpJsonConsumerSpec
       val url = s"http://localhost:${wireMock.port()}"
       val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
 
-      //language=JSON
+      // language=JSON
       val config =
         s"""
           |{
@@ -66,7 +66,7 @@ class HttpJsonConsumerSpec
       val url = s"http://localhost:${wireMock.port()}"
       val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
 
-      //language=JSON
+      // language=JSON
       val config =
         s"""
            |{
@@ -98,7 +98,7 @@ class HttpJsonConsumerSpec
       val url = s"http://localhost:${wireMock.port()}"
       val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
 
-      //language=JSON
+      // language=JSON
       val config =
         s"""
            |{
@@ -116,7 +116,9 @@ class HttpJsonConsumerSpec
 
       val expectedJson = """{"param1": "string", "param2": 1}"""
 
-      subject.consumeSuccess(data).futureValue shouldBe Consumed(s"PUT $url/dynamic/extra with $expectedJson executed with success")
+      subject.consumeSuccess(data).futureValue shouldBe Consumed(
+        s"PUT $url/dynamic/extra with $expectedJson executed with success"
+      )
 
       verify(
         putRequestedFor(urlEqualTo("/dynamic/extra"))

@@ -23,5 +23,4 @@ class LocalFileResolverSpec extends AnyWordSpec with GivenWhenThen with Matchers
     }
   }
 
-
 }

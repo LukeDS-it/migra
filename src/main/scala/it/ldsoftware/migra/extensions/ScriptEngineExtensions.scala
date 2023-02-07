@@ -34,18 +34,16 @@ object ScriptEngineExtensions {
 
     var free: Boolean = true
 
-    def lock(): Unit = {
+    def lock(): Unit =
       free = false
-    }
 
-    def execute[T](function: ScriptEngine => T): T = {
-      try {
+    def execute[T](function: ScriptEngine => T): T =
+      try
         function(engine)
-      } finally {
+      finally {
         engine.setBindings(engine.createBindings(), ScriptContext.GLOBAL_SCOPE)
         free = true
       }
-    }
 
   }
 

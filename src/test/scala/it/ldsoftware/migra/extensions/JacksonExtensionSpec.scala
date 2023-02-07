@@ -8,7 +8,7 @@ class JacksonExtensionSpec extends AnyWordSpec with Matchers {
 
   "asGeneric" should {
     "convert a json string into a map of values" in {
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{
@@ -23,7 +23,7 @@ class JacksonExtensionSpec extends AnyWordSpec with Matchers {
 
   "subGeneric" should {
     "return a list of maps when the sub-property references a collection" in {
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{
@@ -41,7 +41,7 @@ class JacksonExtensionSpec extends AnyWordSpec with Matchers {
     }
 
     "return a map of values when the sub-property references an object" in {
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{
@@ -55,7 +55,7 @@ class JacksonExtensionSpec extends AnyWordSpec with Matchers {
     }
 
     "return an empty map when the property does not exist" in {
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{

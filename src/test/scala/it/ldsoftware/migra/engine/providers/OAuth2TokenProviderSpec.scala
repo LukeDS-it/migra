@@ -34,9 +34,8 @@ class OAuth2TokenProviderSpec
   private val system = ActorSystem("test-oauth2-provider")
   private val pc = ProcessContext(system, mock[AppConfig], mock[FileResolver])
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     wireMock.resetAll()
-  }
 
   "token" should {
     "get the token from an oauth2 endpoint implementation" in {
@@ -45,7 +44,7 @@ class OAuth2TokenProviderSpec
       val id = RandomStringUtils.randomAlphanumeric(10)
       val secret = RandomStringUtils.randomAlphanumeric(10)
 
-      //language=JSON
+      // language=JSON
       val config =
         s"""
            |{
@@ -84,7 +83,7 @@ class OAuth2TokenProviderSpec
       val id = RandomStringUtils.randomAlphanumeric(10)
       val secret = RandomStringUtils.randomAlphanumeric(10)
 
-      //language=JSON
+      // language=JSON
       val config =
         s"""
            |{

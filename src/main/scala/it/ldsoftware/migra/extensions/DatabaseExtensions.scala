@@ -21,21 +21,19 @@ object DatabaseExtensions {
   }
 
   private def makeDataSource(config: Config): DataSource =
-    new HikariConfig()
-      .mutate { cfg =>
-        cfg.setJdbcUrl(config.getString("jdbc-url"))
-        config.getOptString("jdbc-driver").foreach { driver =>
-          cfg.setDriverClassName(driver)
-        }
-        val (username, password) = CredentialManager.getCredentials(config)
-        cfg.setUsername(username)
-        cfg.setPassword(password)
-        cfg.addDataSourceProperty("cachePrepStmts", "true")
-        cfg.addDataSourceProperty("prepStmtCacheSize", "250")
-        cfg.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
+    new HikariConfig().mutate { cfg =>
+      cfg.setJdbcUrl(config.getString("jdbc-url"))
+      config.getOptString("jdbc-driver").foreach { driver =>
+        cfg.setDriverClassName(driver)
       }
-      .let { cfg =>
-        new HikariDataSource(cfg)
-      }
+      val (username, password) = CredentialManager.getCredentials(config)
+      cfg.setUsername(username)
+      cfg.setPassword(password)
+      cfg.addDataSourceProperty("cachePrepStmts", "true")
+      cfg.addDataSourceProperty("prepStmtCacheSize", "250")
+      cfg.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
+    }.let { cfg =>
+      new HikariDataSource(cfg)
+    }
 
 }

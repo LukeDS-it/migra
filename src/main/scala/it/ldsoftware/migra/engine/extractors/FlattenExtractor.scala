@@ -10,18 +10,17 @@ class FlattenExtractor(property: String, override val config: Config, override v
     val ec: ExecutionContext,
     mat: Materializer
 ) extends Extractor {
-  override def doExtract(): Future[Seq[ExtractionResult]] = {
+  override def doExtract(): Future[Seq[ExtractionResult]] =
     Future(initialValue)
       .map(_.get(property))
       .map {
         case Some(value) => flatMapFromAny(value)
         case None        => Seq(Left(s"No property $property found on $initialValue"))
       }
-  }
 
   private def flatMapFromAny(value: Any): Seq[ExtractionResult] = value match {
     case seq if seq.isInstanceOf[Seq[Extracted]] => seq.asInstanceOf[Seq[Extracted]].map(Right(_))
-    case _ => Seq(Left(s"${value.getClass.getSimpleName} is not a sequence"))
+    case _                                       => Seq(Left(s"${value.getClass.getSimpleName} is not a sequence"))
   }
 
   override def toPipedExtractor(data: Extracted): Extractor =

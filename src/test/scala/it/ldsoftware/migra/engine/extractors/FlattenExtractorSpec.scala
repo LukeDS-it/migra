@@ -10,12 +10,13 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class FlattenExtractorSpec extends AnyWordSpec
-  with GivenWhenThen
-  with Matchers
-  with MockFactory
-  with ScalaFutures
-  with IntegrationPatience {
+class FlattenExtractorSpec
+    extends AnyWordSpec
+    with GivenWhenThen
+    with Matchers
+    with MockFactory
+    with ScalaFutures
+    with IntegrationPatience {
 
   private val system = ActorSystem("test-flatten-extractor")
   private val pc = ProcessContext(system, mock[AppConfig], mock[FileResolver])

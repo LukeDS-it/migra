@@ -55,8 +55,8 @@ object Interpolator {
     def prepareNamedStatement(query: String, params: Extracted): PreparedStatement =
       getPositionalQuery(query) match {
         case (positional, paramMap) =>
-          paramMap.foldLeft(connection.prepareStatement(positional)) {
-            case (ps, next) => ps.mutate(_.setObject(next._2, params(next._1)))
+          paramMap.foldLeft(connection.prepareStatement(positional)) { case (ps, next) =>
+            ps.mutate(_.setObject(next._2, params(next._1)))
           }
       }
   }

@@ -21,9 +21,8 @@ object MigraApp extends App with LazyLogging {
       case _                        => throw new Error("MIGRA_MODE env var not found!")
     }
 
-  private def processServer(config: AppConfig): Unit = {
+  private def processServer(config: AppConfig): Unit =
     ActorSystem[Nothing](ServerBehavior(config), "migra-studio")
-  }
 
   private def processStandalone(config: AppConfig, args: Array[String]): Unit = {
     logger.info("Starting in standalone mode")

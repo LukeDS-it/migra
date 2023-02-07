@@ -35,7 +35,7 @@ class HttpExtractorSpec
   "extract" should {
     "get the whole response as extraction result" in {
 
-      //language=JSON
+      // language=JSON
       val config =
         s"""
           |{
@@ -43,7 +43,7 @@ class HttpExtractorSpec
           |}
           |""".stripMargin
 
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{
@@ -64,7 +64,7 @@ class HttpExtractorSpec
     "get a sub-property of the response as list of extraction result" in {
       val subProp = "content"
 
-      //language=JSON
+      // language=JSON
       val config =
         s"""
           |{
@@ -73,7 +73,7 @@ class HttpExtractorSpec
           |}
           |""".stripMargin
 
-      //language=JSON
+      // language=JSON
       val json =
         """
            |{
@@ -100,7 +100,7 @@ class HttpExtractorSpec
     "get a sub-property of the response as extraction result" in {
       val subProp = "credentials"
 
-      //language=JSON
+      // language=JSON
       val config =
         s"""
           |{
@@ -109,7 +109,7 @@ class HttpExtractorSpec
           |}
           |""".stripMargin
 
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{
@@ -131,7 +131,7 @@ class HttpExtractorSpec
     }
 
     "call URLs with basic auth credentials" in {
-      //language=JSON
+      // language=JSON
       val config =
         s"""
           |{
@@ -147,7 +147,7 @@ class HttpExtractorSpec
           |}
           |""".stripMargin
 
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{
@@ -172,7 +172,7 @@ class HttpExtractorSpec
     }
 
     "call URLs with a static bearer token" in {
-      //language=JSON
+      // language=JSON
       val config =
         s"""
            |{
@@ -187,7 +187,7 @@ class HttpExtractorSpec
            |}
            |""".stripMargin
 
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{
@@ -213,7 +213,7 @@ class HttpExtractorSpec
 
     "call URLs with an OAuth2 token provided by a cached provider" in {
       Given("a configuration for an http extractor that requires a token provider")
-      //language=JSON
+      // language=JSON
       val config =
         s"""
            |{
@@ -231,7 +231,7 @@ class HttpExtractorSpec
       val withCaches = pc.copy(tokenCaches = mutable.Map("mockedProvider" -> mockedProvider))
 
       And("response data")
-      //language=JSON
+      // language=JSON
       val json =
         """
           |{

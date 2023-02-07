@@ -17,17 +17,15 @@ class ScalaEvalExtractor(
 ) extends Extractor {
 
   override def doExtract(): Future[Seq[ExtractionResult]] =
-    enginePool.getFreeEngine
-      .map { engine =>
-        engine.execute { e =>
-          e.put("initialValue", initialValue)
-          e.eval(script)
-          e.eval(CallToFunction).asInstanceOf[Extracted]
-        }
+    enginePool.getFreeEngine.map { engine =>
+      engine.execute { e =>
+        e.put("initialValue", initialValue)
+        e.eval(script)
+        e.eval(CallToFunction).asInstanceOf[Extracted]
       }
-      .map { it =>
-        Seq(Right(it))
-      }
+    }.map { it =>
+      Seq(Right(it))
+    }
 
   override def toPipedExtractor(data: Extracted): Extractor =
     new ScalaEvalExtractor(script, enginePool, config, data)
