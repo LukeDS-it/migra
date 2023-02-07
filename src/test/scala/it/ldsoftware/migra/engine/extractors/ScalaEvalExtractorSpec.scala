@@ -28,7 +28,7 @@ class ScalaEvalExtractorSpec
           |      "type":  "ScalaEvalExtractor",
           |      "config": {
           |         "type": "inline",
-          |         "script": "Map(\"element\" -> \"value\")"
+          |         "script": "Seq(Map(\"element\" -> \"value\"))"
           |      }
           |    }
           |  ]
@@ -55,7 +55,7 @@ class ScalaEvalExtractorSpec
           |      "type":  "ScalaEvalExtractor",
           |      "config": {
           |         "type": "inline",
-          |         "script": "Map(\"element\" -> data(\"element\"))"
+          |         "script": "Seq(Map(\"element\" -> data(\"element\")))"
           |      }
           |    }
           |  ]
@@ -98,7 +98,7 @@ class ScalaEvalExtractorSpec
       val fileResolver = mock[FileResolver]
       val expectedScript =
         """
-          |def produce(data: Map[String, Any]): Map[String, Any] = Map("element" -> data("element"))
+          |def produce(data: Map[String, Any]): Seq[Map[String, Any]] = Seq(Map("element" -> data("element")))
           |""".stripMargin
 
       (mockConfig.getInt _).expects("it.ldsoftware.migra.max-script-engines").returning(4)
