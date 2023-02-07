@@ -2,7 +2,7 @@ val akkaVersion = "2.6.19"
 val akkaHttpVersion = "10.2.9"
 val akkaJdbcVersion = "3.5.3"
 val slickVersion = "3.3.3"
-val mysqlVersion = "8.0.28"
+val mysqlVersion = "8.0.30"
 val h2Version = "2.1.210"
 val scalaLoggingVersion = "3.9.4"
 val logbackVersion = "1.2.11"
@@ -19,7 +19,7 @@ val wiremockVersion = "2.32.0"
 val scalamockVersion = "5.2.0"
 val postgresqlVersion = "42.3.3"
 val flywayVersion = "8.5.4"
-val projectScalaVersion = "2.13.6"
+val projectScalaVersion = "2.13.8"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,

@@ -3,6 +3,7 @@ package it.ldsoftware.migra.extensions
 import com.typesafe.config.Config
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import it.ldsoftware.migra.extensions.UsableExtensions.{LetOperations, MutateOperations}
+import ConfigExtensions._
 
 import javax.sql.DataSource
 import scala.collection.mutable
@@ -23,6 +24,9 @@ object DatabaseExtensions {
     new HikariConfig()
       .mutate { cfg =>
         cfg.setJdbcUrl(config.getString("jdbc-url"))
+        config.getOptString("jdbc-driver").foreach { driver =>
+          cfg.setDriverClassName(driver)
+        }
         val (username, password) = CredentialManager.getCredentials(config)
         cfg.setUsername(username)
         cfg.setPassword(password)
