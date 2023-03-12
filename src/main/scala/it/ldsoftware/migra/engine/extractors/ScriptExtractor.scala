@@ -17,12 +17,18 @@ trait ScriptExtractor extends Extractor {
   override def doExtract(): Future[Seq[ExtractionResult]] =
     enginePool.getFreeEngine.map { engine =>
       engine.execute { e =>
-        e.put("initialValue", initialValue)
+        e.put("initialValue", fixInput(initialValue))
         e.eval(script)
-        e.eval(callerFunction).asInstanceOf[Seq[Extracted]]
+        toSeqExtracted(e.eval(callerFunction))
       }
         .map(Right(_))
     }
+
+  def fixInput(initialValue: Extracted): Any =
+    initialValue
+
+  def toSeqExtracted(engineResult: Object): Seq[Extracted] =
+    engineResult.asInstanceOf[Seq[Extracted]]
 
 }
 
