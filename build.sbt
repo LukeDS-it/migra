@@ -20,6 +20,7 @@ val scalamockVersion = "5.2.0"
 val postgresqlVersion = "42.3.3"
 val flywayVersion = "8.5.4"
 val projectScalaVersion = "2.13.8"
+val mockitoScalaVersion = "1.17.12"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -68,12 +69,12 @@ val testDep = Seq(
   "org.scalactic" %% "scalactic" % scalacticVersion % "test,it",
   "org.scalatest" %% "scalatest" % scalacticVersion % "test,it",
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % Test,
-  "org.scalamock" %% "scalamock" % scalamockVersion % "test,it",
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-persistence-testkit" % akkaVersion % Test,
+  "org.mockito" %% "mockito-scala" % mockitoScalaVersion % "test,it"
 )
 
 lazy val root = (project in file("."))

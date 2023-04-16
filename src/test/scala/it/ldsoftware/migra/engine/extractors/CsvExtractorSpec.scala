@@ -4,12 +4,12 @@ import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{Extractor, FileResolver, ProcessContext}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class CsvExtractorSpec extends AnyWordSpec with Matchers with MockFactory with ScalaFutures with IntegrationPatience {
+class CsvExtractorSpec extends AnyWordSpec with Matchers with IdiomaticMockito with ScalaFutures with IntegrationPatience {
 
   "extract" should {
     "retrieve rows from a csv file, assigning data to corresponding header" in new Fixture {
@@ -31,7 +31,7 @@ class CsvExtractorSpec extends AnyWordSpec with Matchers with MockFactory with S
 
       override val config: Config = ConfigFactory.parseString(configJson)
 
-      (fileResolver.retrieveFile _).expects(fileName).returning(file)
+      fileResolver.retrieveFile(fileName) returns file
 
       subject.extract().futureValue shouldBe Seq(Right(expected))
     }
@@ -56,7 +56,7 @@ class CsvExtractorSpec extends AnyWordSpec with Matchers with MockFactory with S
 
       override val config: Config = ConfigFactory.parseString(configJson)
 
-      (fileResolver.retrieveFile _).expects(fileName).returning(file)
+      fileResolver.retrieveFile(fileName) returns file
 
       subject.extract().futureValue shouldBe Seq(Right(expected))
     }
@@ -78,7 +78,7 @@ class CsvExtractorSpec extends AnyWordSpec with Matchers with MockFactory with S
 
       override val config: Config = ConfigFactory.parseString(configJson)
 
-      (fileResolver.retrieveFile _).expects(fileName).returning(file)
+      fileResolver.retrieveFile(fileName) returns file
 
       subject.extract().futureValue shouldBe Seq()
     }

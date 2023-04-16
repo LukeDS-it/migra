@@ -7,8 +7,8 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
-import it.ldsoftware.migra.engine.{Consumed, FileResolver, ProcessContext}
-import org.scalamock.scalatest.MockFactory
+import it.ldsoftware.migra.engine.{Consumed, Consumer, FileResolver, ProcessContext}
+import org.mockito.IdiomaticMockito
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -18,25 +18,18 @@ class HttpJsonConsumerSpec
     extends AnyWordSpec
     with GivenWhenThen
     with Matchers
-    with MockFactory
+    with IdiomaticMockito
     with ScalaFutures
     with IntegrationPatience {
 
-  private val wireMock = new WireMockServer(wireMockConfig().dynamicPort())
-  wireMock.start()
-  WireMock.configureFor(wireMock.port())
-
-  private val system = ActorSystem("test-http-consumer")
-  private val pc = ProcessContext(system, mock[AppConfig], mock[FileResolver])
-
   "consumeSuccess" should {
-    "send a POST request with the compiled json" in {
+    "send a POST request with the compiled json" in new Fixture {
 
-      val url = s"http://localhost:${wireMock.port()}"
-      val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
+      private val url = s"http://localhost:${wireMock.port()}"
+      private val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
 
       // language=JSON
-      val config =
+      override val config: String =
         s"""
           |{
           |  "url": "$url",
@@ -44,13 +37,11 @@ class HttpJsonConsumerSpec
           |}
           |""".stripMargin
 
-      val data = Map("string" -> "string", "number" -> 1)
+      private val data = Map("string" -> "string", "number" -> 1)
 
       stubFor(post("/").willReturn(aResponse().withStatus(201)))
 
-      val subject = HttpJsonConsumer(ConfigFactory.parseString(config), pc)
-
-      val expectedJson = """{"param1": "string", "param2": 1}"""
+      private val expectedJson = """{"param1": "string", "param2": 1}"""
 
       subject.consumeSuccess(data).futureValue shouldBe Consumed(s"POST $url with $expectedJson executed with success")
 
@@ -62,12 +53,12 @@ class HttpJsonConsumerSpec
       )
     }
 
-    "send a request with custom method" in {
-      val url = s"http://localhost:${wireMock.port()}"
-      val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
+    "send a request with custom method" in new Fixture {
+      private val url = s"http://localhost:${wireMock.port()}"
+      private val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
 
       // language=JSON
-      val config =
+      override val config: String =
         s"""
            |{
            |  "url": "$url",
@@ -76,13 +67,11 @@ class HttpJsonConsumerSpec
            |}
            |""".stripMargin
 
-      val data = Map("string" -> "string", "number" -> 1)
+      private val data = Map("string" -> "string", "number" -> 1)
 
       stubFor(put("/").willReturn(aResponse().withStatus(201)))
 
-      val subject = HttpJsonConsumer(ConfigFactory.parseString(config), pc)
-
-      val expectedJson = """{"param1": "string", "param2": 1}"""
+      private val expectedJson = """{"param1": "string", "param2": 1}"""
 
       subject.consumeSuccess(data).futureValue shouldBe Consumed(s"PUT $url with $expectedJson executed with success")
 
@@ -94,12 +83,12 @@ class HttpJsonConsumerSpec
       )
     }
 
-    "send a request to a dynamic URL" in {
-      val url = s"http://localhost:${wireMock.port()}"
-      val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
+    "send a request to a dynamic URL" in new Fixture {
+      private val url = s"http://localhost:${wireMock.port()}"
+      private val template = """{\"param1\": \"${string}\", \"param2\": ${number}}"""
 
       // language=JSON
-      val config =
+      override val config: String =
         s"""
            |{
            |  "url": "$url/dynamic/$${param}",
@@ -108,13 +97,11 @@ class HttpJsonConsumerSpec
            |}
            |""".stripMargin
 
-      val data = Map("string" -> "string", "number" -> 1, "param" -> "extra")
+      private val data = Map("string" -> "string", "number" -> 1, "param" -> "extra")
 
       stubFor(put("/dynamic/extra").willReturn(aResponse().withStatus(201)))
 
-      val subject = HttpJsonConsumer(ConfigFactory.parseString(config), pc)
-
-      val expectedJson = """{"param1": "string", "param2": 1}"""
+      private val expectedJson = """{"param1": "string", "param2": 1}"""
 
       subject.consumeSuccess(data).futureValue shouldBe Consumed(
         s"PUT $url/dynamic/extra with $expectedJson executed with success"
@@ -128,6 +115,19 @@ class HttpJsonConsumerSpec
       )
 
     }
+  }
+
+  private trait Fixture {
+    val config: String
+
+    val wireMock: WireMockServer = new WireMockServer(wireMockConfig().dynamicPort())
+    wireMock.start()
+    WireMock.configureFor(wireMock.port())
+
+    private val system: ActorSystem = ActorSystem("test-http-consumer")
+    private val pc: ProcessContext = ProcessContext(system, mock[AppConfig], mock[FileResolver])
+
+    lazy val subject: Consumer = HttpJsonConsumer(ConfigFactory.parseString(config), pc)
   }
 
 }

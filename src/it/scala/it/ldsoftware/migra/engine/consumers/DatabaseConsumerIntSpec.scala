@@ -6,7 +6,7 @@ import it.ldsoftware.migra.DatabaseUtils
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{Consumed, FileResolver, ProcessContext}
 import org.apache.commons.lang3.RandomStringUtils
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -22,7 +22,7 @@ class DatabaseConsumerIntSpec
     with Eventually
     with ScalaFutures
     with IntegrationPatience
-    with MockFactory {
+    with IdiomaticMockito {
 
   implicit override val patienceConfig: PatienceConfig =
     PatienceConfig(timeout = scaled(Span(2, Seconds)), interval = scaled(Span(15, Millis)))

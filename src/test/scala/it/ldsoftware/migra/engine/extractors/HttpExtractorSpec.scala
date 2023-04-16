@@ -7,8 +7,8 @@ import com.github.tomakehurst.wiremock.client.{BasicCredentials, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
-import it.ldsoftware.migra.engine.{FileResolver, ProcessContext, TokenProvider}
-import org.scalamock.scalatest.MockFactory
+import it.ldsoftware.migra.engine.{Extractor, FileResolver, ProcessContext, TokenProvider}
+import org.mockito.IdiomaticMockito
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -21,22 +21,15 @@ class HttpExtractorSpec
     extends AnyWordSpec
     with GivenWhenThen
     with Matchers
-    with MockFactory
+    with IdiomaticMockito
     with ScalaFutures
     with IntegrationPatience {
 
-  private val wireMock = new WireMockServer(wireMockConfig().dynamicPort())
-  wireMock.start()
-  WireMock.configureFor(wireMock.port())
-
-  private val system = ActorSystem("test-http-extractor")
-  private val pc = ProcessContext(system, mock[AppConfig], mock[FileResolver])
-
   "extract" should {
-    "get the whole response as extraction result" in {
+    "get the whole response as extraction result" in new Fixture {
 
       // language=JSON
-      val config =
+      override val config: String =
         s"""
           |{
           | "url": "http://localhost:${wireMock.port()}"
@@ -44,7 +37,7 @@ class HttpExtractorSpec
           |""".stripMargin
 
       // language=JSON
-      val json =
+      private val json =
         """
           |{
           |  "strField": "string",
@@ -54,18 +47,16 @@ class HttpExtractorSpec
 
       stubFor(get("/").willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)))
 
-      val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
-
-      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
+      private val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
 
       subject.extract().futureValue shouldBe expected
     }
 
-    "get a sub-property of the response as list of extraction result" in {
+    "get a sub-property of the response as list of extraction result" in new Fixture {
       val subProp = "content"
 
       // language=JSON
-      val config =
+      override val config: String =
         s"""
           |{
           | "url": "http://localhost:${wireMock.port()}",
@@ -74,7 +65,7 @@ class HttpExtractorSpec
           |""".stripMargin
 
       // language=JSON
-      val json =
+      private val json =
         """
            |{
            |  "page": 1,
@@ -85,23 +76,21 @@ class HttpExtractorSpec
            |}
            |""".stripMargin
 
-      val expected = Seq(
+      private val expected = Seq(
         Right(Map("name" -> "user1")),
         Right(Map("name" -> "user2"))
       )
 
       stubFor(get("/").willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)))
 
-      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
-
       subject.extract().futureValue shouldBe expected
     }
 
-    "get a sub-property of the response as extraction result" in {
+    "get a sub-property of the response as extraction result" in new Fixture {
       val subProp = "credentials"
 
       // language=JSON
-      val config =
+      override val config: String =
         s"""
           |{
           | "url": "http://localhost:${wireMock.port()}",
@@ -110,7 +99,7 @@ class HttpExtractorSpec
           |""".stripMargin
 
       // language=JSON
-      val json =
+      private val json =
         """
           |{
           |  "application": "migra",
@@ -121,18 +110,16 @@ class HttpExtractorSpec
           |}
           |""".stripMargin
 
-      val expected = Map("accessKey" -> "AKIAI0", "secretKey" -> "WUBRG~")
+      private val expected = Map("accessKey" -> "AKIAI0", "secretKey" -> "WUBRG~")
 
       stubFor(get("/").willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)))
-
-      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
 
       subject.extract().futureValue shouldBe Seq(Right(expected))
     }
 
-    "call URLs with basic auth credentials" in {
+    "call URLs with basic auth credentials" in new Fixture {
       // language=JSON
-      val config =
+      override val config: String =
         s"""
           |{
           | "url": "http://localhost:${wireMock.port()}",
@@ -148,7 +135,7 @@ class HttpExtractorSpec
           |""".stripMargin
 
       // language=JSON
-      val json =
+      private val json =
         """
           |{
           |  "strField": "string",
@@ -162,18 +149,16 @@ class HttpExtractorSpec
           .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json))
       )
 
-      val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
-
-      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
+      private val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
 
       subject.extract().futureValue shouldBe expected
 
       verify(getRequestedFor(urlEqualTo("/")).withBasicAuth(new BasicCredentials("user", "pass")))
     }
 
-    "call URLs with a static bearer token" in {
+    "call URLs with a static bearer token" in new Fixture {
       // language=JSON
-      val config =
+      override val config: String =
         s"""
            |{
            | "url": "http://localhost:${wireMock.port()}",
@@ -188,7 +173,7 @@ class HttpExtractorSpec
            |""".stripMargin
 
       // language=JSON
-      val json =
+      private val json =
         """
           |{
           |  "strField": "string",
@@ -202,52 +187,46 @@ class HttpExtractorSpec
           .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json))
       )
 
-      val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
-
-      val subject = HttpExtractor(ConfigFactory.parseString(config), pc)
+      private val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
 
       subject.extract().futureValue shouldBe expected
 
       verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer token")))
     }
 
-    "call URLs with an OAuth2 token provided by a cached provider" in {
+    "call URLs with an OAuth2 token provided by a cached provider" in new Fixture {
       Given("a configuration for an http extractor that requires a token provider")
       // language=JSON
-      val config =
+      override val config: String =
         s"""
            |{
            | "url": "http://localhost:${wireMock.port()}",
            | "auth": {
            |   "type": "oauth2",
-           |   "provider": "mockedProvider"
+           |   "provider": "$providerName"
            | }
            |}
            |""".stripMargin
 
       And("a mocked provider that returns tokens")
-      val mockedProvider = mock[TokenProvider]
-      (mockedProvider.token _).expects().returning(Future.successful("token"))
-      val withCaches = pc.copy(tokenCaches = mutable.Map("mockedProvider" -> mockedProvider))
+      mockedProvider.token returns Future.successful("token")
 
       And("response data")
       // language=JSON
-      val json =
+      private val json =
         """
           |{
           |  "strField": "string",
           |  "intField": 10
           |}
           |""".stripMargin
-      val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
+      private val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
 
       stubFor(
         get("/")
           .withHeader("Authorization", equalTo("Bearer token"))
           .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json))
       )
-
-      val subject = HttpExtractor(ConfigFactory.parseString(config), withCaches)
 
       When("extracting the data")
       subject.extract().futureValue shouldBe expected
@@ -258,4 +237,18 @@ class HttpExtractorSpec
 
   }
 
+  private trait Fixture {
+    val config: String
+    val wireMock: WireMockServer = new WireMockServer(wireMockConfig().dynamicPort())
+    val providerName: String = "mockedProvider"
+
+    wireMock.start()
+    WireMock.configureFor(wireMock.port())
+    val mockedProvider: TokenProvider = mock[TokenProvider]
+
+    private val system: ActorSystem = ActorSystem("test-http-extractor")
+    private val pc: ProcessContext = ProcessContext(system, mock[AppConfig], mock[FileResolver], mutable.Map(providerName -> mockedProvider))
+
+    lazy val subject: Extractor = HttpExtractor(ConfigFactory.parseString(config), pc)
+  }
 }

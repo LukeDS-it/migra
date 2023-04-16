@@ -4,11 +4,11 @@ import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class ExtractorFactorySpec extends AnyWordSpec with Matchers with MockFactory {
+class ExtractorFactorySpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
   // language=JSON
   private val config =
