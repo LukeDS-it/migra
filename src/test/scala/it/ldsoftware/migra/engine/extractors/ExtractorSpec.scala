@@ -3,7 +3,7 @@ package it.ldsoftware.migra.engine.extractors
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
-import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
+import it.ldsoftware.migra.engine.{Extracted, ExtractionResult, Extractor, FileResolver, ProcessContext}
 import org.mockito.IdiomaticMockito
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should
@@ -17,9 +17,9 @@ class ExtractorSpec
     with IdiomaticMockito {
 
   "an extractor" should {
-    "emit new data when the configuration does not specify anything" in {
+    "emit new data when the configuration does not specify anything" in new Fixture {
       // language=JSON
-      val config =
+      override val config: String =
         """{
           |  "extract":  [
           |    {
@@ -29,18 +29,16 @@ class ExtractorSpec
           |  ]
           |}""".stripMargin
 
-      val data = Map("old" -> "value")
+      override val data: Extracted = Map("old" -> "value")
 
-      val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
-      val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
+      override val expected: Seq[ExtractionResult] = Seq(Right(Map("extracted" -> "template string")))
 
-      extractor.extract().futureValue shouldBe Seq(Right(Map("extracted" -> "template string")))
+      subject.extract().futureValue shouldBe expected
     }
 
-    "emit new data when the configuration explicitly says to replace" in {
+    "emit new data when the configuration explicitly says to replace" in new Fixture {
       // language=JSON
-      val config =
+      override val config: String =
         """{
           |  "extract":  [
           |    {
@@ -50,18 +48,16 @@ class ExtractorSpec
           |  ]
           |}""".stripMargin
 
-      val data = Map("old" -> "value")
+      override val data: Extracted = Map("old" -> "value")
 
-      val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
-      val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
+      override val expected: Seq[ExtractionResult] = Seq(Right(Map("extracted" -> "template string")))
 
-      extractor.extract().futureValue shouldBe Seq(Right(Map("extracted" -> "template string")))
+      subject.extract().futureValue shouldBe expected
     }
 
-    "emit interpolated data when the configuration is to merge data" in {
+    "emit interpolated data when the configuration is to merge data" in new Fixture {
       // language=JSON
-      val config =
+      override val config: String =
         """{
           |  "extract":  [
           |    {
@@ -71,20 +67,17 @@ class ExtractorSpec
           |  ]
           |}""".stripMargin
 
-      val data = Map("old" -> "value")
+      override val data: Extracted = Map("old" -> "value")
 
-      val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
-      val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
 
-      val expected = Map("old" -> "value", "extracted" -> "template string")
+      override val expected: Seq[ExtractionResult] = Seq(Right(Map("old" -> "value", "extracted" -> "template string")))
 
-      extractor.extract().futureValue shouldBe Seq(Right(expected))
+      subject.extract().futureValue shouldBe expected
     }
 
-    "prepend a value to the new extracted property name when conflict resolving is Prepend" in {
+    "prepend a value to the new extracted property name when conflict resolving is Prepend" in new Fixture {
       // language=JSON
-      val config =
+      override val config: String =
         """{
           |  "extract":  [
           |    {
@@ -101,20 +94,16 @@ class ExtractorSpec
           |  ]
           |}""".stripMargin
 
-      val data = Map("extracted" -> "value")
+      override val data: Extracted = Map("extracted" -> "value")
 
-      val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
-      val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
+      override val expected: Seq[ExtractionResult] = Seq(Right(Map("extracted" -> "value", "new_extracted" -> "template string")))
 
-      val expected = Map("extracted" -> "value", "new_extracted" -> "template string")
-
-      extractor.extract().futureValue shouldBe Seq(Right(expected))
+      subject.extract().futureValue shouldBe expected
     }
 
-    "append a value to the new extracted property name when conflict resolving is Append" in {
+    "append a value to the new extracted property name when conflict resolving is Append" in new Fixture {
       // language=JSON
-      val config =
+      override val config: String =
         """{
           |  "extract":  [
           |    {
@@ -131,20 +120,16 @@ class ExtractorSpec
           |  ]
           |}""".stripMargin
 
-      val data = Map("extracted" -> "value")
+      override val data: Extracted = Map("extracted" -> "value")
 
-      val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
-      val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
+      override val expected: Seq[ExtractionResult] = Seq(Right(Map("extracted" -> "value", "extracted_new" -> "template string")))
 
-      val expected = Map("extracted" -> "value", "extracted_new" -> "template string")
-
-      extractor.extract().futureValue shouldBe Seq(Right(expected))
+      subject.extract().futureValue shouldBe expected
     }
 
-    "substitute a value when conflict resolving is Substitute" in {
+    "substitute a value when conflict resolving is Substitute" in new Fixture {
       // language=JSON
-      val config =
+      override val config: String =
         """{
           |  "extract":  [
           |    {
@@ -160,16 +145,23 @@ class ExtractorSpec
           |  ]
           |}""".stripMargin
 
-      val data = Map("extracted" -> "value")
+      override val data: Extracted = Map("extracted" -> "value")
 
-      val c = ConfigFactory.parseString(config)
-      val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
-      val extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
+      override val expected: Seq[ExtractionResult] = Seq(Right(Map("extracted" -> "template string")))
 
-      val expected = Map("extracted" -> "template string")
-
-      extractor.extract().futureValue shouldBe Seq(Right(expected))
+      subject.extract().futureValue shouldBe expected
     }
+  }
+
+  private trait Fixture {
+    val config: String
+    val data: Extracted
+    val expected: Seq[ExtractionResult]
+
+    private lazy val c = ConfigFactory.parseString(config)
+    private val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
+
+    lazy val subject: Extractor = ExtractorFactory.getExtractors(c, pc).head.toPipedExtractor(data)
   }
 
 }
