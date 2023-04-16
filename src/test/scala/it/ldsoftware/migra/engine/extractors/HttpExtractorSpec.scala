@@ -8,7 +8,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext, TokenProvider}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -21,7 +21,7 @@ class HttpExtractorSpec
     extends AnyWordSpec
     with GivenWhenThen
     with Matchers
-    with MockFactory
+    with IdiomaticMockito
     with ScalaFutures
     with IntegrationPatience {
 
@@ -227,7 +227,7 @@ class HttpExtractorSpec
 
       And("a mocked provider that returns tokens")
       val mockedProvider = mock[TokenProvider]
-      (mockedProvider.token _).expects().returning(Future.successful("token"))
+      mockedProvider.token returns Future.successful("token")
       val withCaches = pc.copy(tokenCaches = mutable.Map("mockedProvider" -> mockedProvider))
 
       And("response data")

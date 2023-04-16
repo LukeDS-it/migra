@@ -1,13 +1,12 @@
 package it.ldsoftware.migra.engine.resolvers
 
-import org.scalamock.scalatest.MockFactory
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 import java.io.File
 
-class LocalFileResolverSpec extends AnyWordSpec with GivenWhenThen with Matchers with MockFactory {
+class LocalFileResolverSpec extends AnyWordSpec with GivenWhenThen with Matchers {
 
   "the local file resolver" should {
     "read file from a relative path" in {

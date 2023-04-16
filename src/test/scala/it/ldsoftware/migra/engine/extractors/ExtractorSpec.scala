@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should
 import org.scalatest.wordspec.AnyWordSpec
@@ -14,7 +14,7 @@ class ExtractorSpec
     with should.Matchers
     with ScalaFutures
     with IntegrationPatience
-    with MockFactory {
+    with IdiomaticMockito {
 
   "an extractor" should {
     "emit new data when the configuration does not specify anything" in {

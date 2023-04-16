@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -14,7 +14,7 @@ class FlattenExtractorSpec
     extends AnyWordSpec
     with GivenWhenThen
     with Matchers
-    with MockFactory
+    with IdiomaticMockito
     with ScalaFutures
     with IntegrationPatience {
 

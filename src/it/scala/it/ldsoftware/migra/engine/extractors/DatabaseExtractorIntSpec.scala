@@ -6,7 +6,7 @@ import it.ldsoftware.migra.DatabaseUtils
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
 import org.apache.commons.lang3.RandomStringUtils
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -20,7 +20,7 @@ class DatabaseExtractorIntSpec
     with Matchers
     with ScalaFutures
     with IntegrationPatience
-    with MockFactory {
+    with IdiomaticMockito {
 
   import slick.jdbc.H2Profile.api._
 

@@ -10,11 +10,11 @@ import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
 import org.apache.commons.lang3.RandomStringUtils
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{BeforeAndAfterEach, GivenWhenThen}
+import org.mockito.IdiomaticMockito
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.{BeforeAndAfterEach, GivenWhenThen}
 
 import scala.util.Random
 
@@ -22,7 +22,7 @@ class OAuth2TokenProviderSpec
     extends AnyWordSpec
     with GivenWhenThen
     with Matchers
-    with MockFactory
+    with IdiomaticMockito
     with ScalaFutures
     with IntegrationPatience
     with BeforeAndAfterEach {
