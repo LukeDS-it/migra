@@ -194,6 +194,43 @@ class HttpExtractorSpec
       verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer token")))
     }
 
+    "call URLs with custom authentication" in new Fixture {
+
+      // language=JSON
+      override val config: String =
+        s"""
+           |{
+           | "url": "http://localhost:${wireMock.port()}",
+           | "auth": {
+           |   "type": "custom",
+           |   "schema": "schema",
+           |   "token": "token"
+           | }
+           |}
+           |""".stripMargin
+
+      // language=JSON
+      private val json =
+        """
+          |{
+          |  "strField": "string",
+          |  "intField": 10
+          |}
+          |""".stripMargin
+
+      stubFor(
+        get("/")
+          .withHeader("Authorization", equalTo("schema token"))
+          .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json))
+      )
+
+      private val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
+
+      subject.extract().futureValue shouldBe expected
+
+      verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("schema token")))
+    }
+
     "call URLs with an OAuth2 token provided by a cached provider" in new Fixture {
       Given("a configuration for an http extractor that requires a token provider")
       // language=JSON

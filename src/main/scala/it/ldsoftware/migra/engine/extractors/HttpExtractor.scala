@@ -1,7 +1,7 @@
 package it.ldsoftware.migra.engine.extractors
 
 import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
@@ -13,9 +13,11 @@ import it.ldsoftware.migra.extensions.JacksonExtension._
 import scala.concurrent.{ExecutionContext, Future}
 
 class HttpExtractor(
+    httpMethod: HttpMethod = HttpMethods.GET,
     url: String,
     subPath: Option[String],
     auth: AuthMethod,
+    requestBody: Option[String] = None,
     http: HttpExt,
     override val config: Config,
     override val initialValue: Extracted
@@ -26,7 +28,7 @@ class HttpExtractor(
 
   override def doExtract(): Future[Seq[ExtractionResult]] =
     auth.toHeaders
-      .map(headers => HttpRequest(uri = url, headers = headers))
+      .map(headers => makeRequest(httpMethod, url, headers, requestBody))
       .flatMap(r => http.singleRequest(r))
       .flatMap(r => Unmarshal(r).to[String].map(s => (r.status, s)))
       .map {
@@ -34,8 +36,20 @@ class HttpExtractor(
         case (_, error)                                => Seq(Left(error))
       }
 
+  private def makeRequest(method: HttpMethod, url: String, headers: Seq[HttpHeader], body: Option[String]) =
+    body
+      .map(b =>
+        HttpRequest(
+          method = method,
+          uri = url,
+          headers = headers,
+          entity = HttpEntity(MediaTypes.`application/json`, b)
+        )
+      )
+      .getOrElse(HttpRequest(method = method, uri = url, headers = headers))
+
   override def toPipedExtractor(data: Extracted): Extractor =
-    new HttpExtractor(url <-- data, subPath, auth, http, config, data)
+    new HttpExtractor(httpMethod, url <-- data, subPath, auth, requestBody.map(_ <-- data), http, config, data)
 
   override def summary: String = "HttpExtractor failed TODO"
 
@@ -52,10 +66,15 @@ object HttpExtractor extends ExtractorBuilder {
     val url = config.getString("url")
     val subPath = config.getOptString("subPath")
     val auth = AuthMethod.fromConfig(config, pc)
+
+    val method = config.getOptString("method").flatMap(HttpMethods.getForKeyCaseInsensitive).getOrElse(HttpMethods.GET)
+    val jsonBody =
+      config.getOptConfig("body").map(_.toString).map(s => s.substring(s.indexOf("{"), s.lastIndexOf("}") + 1))
+
     implicit val executionContext: ExecutionContext = pc.executionContext
     implicit val materializer: Materializer = pc.materializer
 
-    new HttpExtractor(url, subPath, auth, pc.http, config, Map())
+    new HttpExtractor(method, url, subPath, auth, jsonBody, pc.http, config, Map())
   }
 
 }
