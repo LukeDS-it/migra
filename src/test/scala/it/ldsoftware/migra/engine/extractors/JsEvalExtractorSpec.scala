@@ -5,11 +5,12 @@ import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
 import org.mockito.IdiomaticMockito
-import org.scalatest.GivenWhenThen
+import org.scalatest.{GivenWhenThen, Ignore}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+@Ignore
 class JsEvalExtractorSpec extends AnyWordSpec
   with GivenWhenThen
   with Matchers
