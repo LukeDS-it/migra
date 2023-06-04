@@ -1,13 +1,13 @@
 package it.ldsoftware.migra.extensions
 
 import it.ldsoftware.migra.extensions.Interpolator._
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 import java.sql.Connection
 
-class InterpolatorSpec extends AnyWordSpec with Matchers with MockFactory {
+class InterpolatorSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
   "The main interpolator" should {
 
