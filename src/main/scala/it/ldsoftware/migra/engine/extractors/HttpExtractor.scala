@@ -33,7 +33,7 @@ class HttpExtractor(
       .flatMap(r => Unmarshal(r).to[String].map(s => (r.status, s)))
       .map {
         case (status, json) if status.intValue() < 300 => produceSuccess(json.jsonGet(subPath))
-        case (status, error)                                => Seq(Left(s"Unexpected response: Status $status - $error"))
+        case (status, error)                           => Seq(Left(s"Unexpected response: Status $status - $error"))
       }
 
   private def makeRequest(method: HttpMethod, url: String, headers: Seq[HttpHeader], body: Option[String]) =
