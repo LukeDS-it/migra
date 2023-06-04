@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.IdiomaticMockito
 import org.scalatest.GivenWhenThen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -13,7 +13,7 @@ import org.scalatest.wordspec.AnyWordSpec
 class JsEvalExtractorSpec extends AnyWordSpec
   with GivenWhenThen
   with Matchers
-  with MockFactory
+  with IdiomaticMockito
   with ScalaFutures
   with IntegrationPatience {
 
@@ -36,7 +36,7 @@ class JsEvalExtractorSpec extends AnyWordSpec
       val mockConfig = mock[Config]
       val appConfig = AppConfig(mockConfig)
 
-      (mockConfig.getInt _).expects("it.ldsoftware.migra.max-script-engines").returning(4)
+      mockConfig.getInt("it.ldsoftware.migra.max-script-engines") returns 4
 
       val c = ConfigFactory.parseString(config)
       val pc = ProcessContext(ActorSystem("test"), appConfig, mock[FileResolver])
@@ -65,7 +65,7 @@ class JsEvalExtractorSpec extends AnyWordSpec
       val mockConfig = mock[Config]
       val appConfig = AppConfig(mockConfig)
 
-      (mockConfig.getInt _).expects("it.ldsoftware.migra.max-script-engines").returning(4)
+      mockConfig.getInt("it.ldsoftware.migra.max-script-engines") returns 4
 
       val c = ConfigFactory.parseString(config)
       val pc = ProcessContext(ActorSystem("test"), appConfig, mock[FileResolver])
@@ -105,8 +105,8 @@ class JsEvalExtractorSpec extends AnyWordSpec
           |}
           |""".stripMargin
 
-      (mockConfig.getInt _).expects("it.ldsoftware.migra.max-script-engines").returning(4)
-      (fileResolver.retrieveFile _).expects("testScript.js").returning(expectedScript)
+      mockConfig.getInt("it.ldsoftware.migra.max-script-engines") returns 4
+      fileResolver.retrieveFile("testScript.js") returns expectedScript
 
       val c = ConfigFactory.parseString(config)
       val pc = ProcessContext(ActorSystem("test"), appConfig, fileResolver)
