@@ -272,6 +272,45 @@ class HttpExtractorSpec
       verify(getRequestedFor(urlEqualTo("/")).withHeader("Authorization", equalTo("Bearer token")))
     }
 
+    "call URLs with POST and body" in new Fixture {
+      Given("A configuration with POST method and a json request body")
+
+      // language=JSON
+      override val config: String =
+        s"""
+           |{
+           |  "url": "http://localhost:${wireMock.port()}",
+           |  "method": "POST",
+           |  "body": {
+           |    "key": "value"
+           |  }
+           |}
+           |""".stripMargin
+
+      // language=JSON
+      val expectedJson = """{"key": "value"}"""
+
+      And("response data")
+      // language=JSON
+      private val json =
+        """
+          |{
+          |  "strField": "string",
+          |  "intField": 10
+          |}
+          |""".stripMargin
+      private val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
+
+      stubFor(
+        post("/")
+          .withRequestBody(equalToJson(expectedJson, true, true))
+          .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json))
+      )
+
+      When("extracting the data")
+      Then("the request should be properly executed")
+      subject.extract().futureValue shouldBe expected
+    }
   }
 
   private trait Fixture {
