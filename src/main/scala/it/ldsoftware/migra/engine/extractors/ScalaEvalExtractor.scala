@@ -2,30 +2,20 @@ package it.ldsoftware.migra.engine.extractors
 
 import com.typesafe.config.Config
 import it.ldsoftware.migra.engine._
-import it.ldsoftware.migra.engine.extractors.ScalaEvalExtractor.CallToFunction
 import it.ldsoftware.migra.extensions.ScriptEngineExtensions.ScriptEnginePool
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ScalaEvalExtractor(
-    script: String,
-    enginePool: ScriptEnginePool,
+    override val script: String,
+    override val enginePool: ScriptEnginePool,
     override val config: Config,
     override val initialValue: Extracted = Map()
 )(implicit
     val ec: ExecutionContext
-) extends Extractor {
+) extends ScriptExtractor {
 
-  override def doExtract(): Future[Seq[ExtractionResult]] =
-    enginePool.getFreeEngine.map { engine =>
-      engine.execute { e =>
-        e.put("initialValue", initialValue)
-        e.eval(script)
-        e.eval(CallToFunction).asInstanceOf[Extracted]
-      }
-    }.map { it =>
-      Seq(Right(it))
-    }
+  override val callerFunction = "produce(initialValue.asInstanceOf[Map[String, Any]])"
 
   override def toPipedExtractor(data: Extracted): Extractor =
     new ScalaEvalExtractor(script, enginePool, config, data)
@@ -33,28 +23,22 @@ class ScalaEvalExtractor(
   override def summary: String = s"ScalaEvalExtractor failed to execute script with data $initialValue"
 }
 
-object ScalaEvalExtractor extends ExtractorBuilder {
+object ScalaEvalExtractor extends ScriptExtractorBuilder {
 
-  private val CallToFunction = "produce(initialValue.asInstanceOf[Map[String, Any]])"
-
-  private val WrapperFunction =
+  override val WrapperFunction: String =
     """
-      |def produce(data: Map[String, Any]): Map[String, Any] = {
+      |def produce(data: Map[String, Any]): Seq[Map[String, Any]] = {
       | %s
       |}
       |""".stripMargin
 
-  override def apply(config: Config, pc: ProcessContext): Extractor = {
-    val script = config.getString("type") match {
-      case "inline" => String.format(WrapperFunction, config.getString("script"))
-      case "file"   => pc.retrieveFile(config.getString("file"))
-      case x        => throw new Error(s"Cannot handle script of type $x")
-    }
-    implicit val ec: ExecutionContext = pc.executionContext
+  override val Language: String = "scala"
 
-    val enginePool = new ScriptEnginePool("scala", pc.appConfig)
-
-    new ScalaEvalExtractor(script, enginePool, config)
-  }
+  override def getNewInstance(
+      script: String,
+      pool: ScriptEnginePool,
+      config: Config
+  ): ExecutionContext => ScriptExtractor =
+    ec => new ScalaEvalExtractor(script, pool, config)(ec)
 
 }

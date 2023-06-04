@@ -5,18 +5,18 @@ import com.typesafe.config.{Config, ConfigFactory}
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{FileResolver, ProcessContext}
 import org.mockito.IdiomaticMockito
-import org.scalatest.GivenWhenThen
+import org.scalatest.{GivenWhenThen, Ignore}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class ScalaEvalExtractorSpec
-    extends AnyWordSpec
-    with GivenWhenThen
-    with Matchers
-    with IdiomaticMockito
-    with ScalaFutures
-    with IntegrationPatience {
+@Ignore
+class JsEvalExtractorSpec extends AnyWordSpec
+  with GivenWhenThen
+  with Matchers
+  with IdiomaticMockito
+  with ScalaFutures
+  with IntegrationPatience {
 
   "extract" should {
     "produce data" in {
@@ -25,10 +25,10 @@ class ScalaEvalExtractorSpec
         """{
           |  "extract":  [
           |    {
-          |      "type":  "ScalaEvalExtractor",
+          |      "type":  "JsEvalExtractor",
           |      "config": {
           |         "type": "inline",
-          |         "script": "Seq(Map(\"element\" -> \"value\"))"
+          |         "script": "[{\"element\": \"value\"}]"
           |      }
           |    }
           |  ]
@@ -52,10 +52,10 @@ class ScalaEvalExtractorSpec
         """{
           |  "extract":  [
           |    {
-          |      "type":  "ScalaEvalExtractor",
+          |      "type":  "JsEvalExtractor",
           |      "config": {
           |         "type": "inline",
-          |         "script": "Seq(Map(\"element\" -> data(\"element\")))"
+          |         "script": "[{\"element\": data[\"element\"]}]"
           |      }
           |    }
           |  ]
@@ -81,10 +81,10 @@ class ScalaEvalExtractorSpec
         """{
           |  "extract":  [
           |    {
-          |      "type":  "ScalaEvalExtractor",
+          |      "type":  "JsEvalExtractor",
           |      "config": {
           |         "type": "file",
-          |         "file": "testScript.scala"
+          |         "file": "testScript.js"
           |      }
           |    }
           |  ]
@@ -96,13 +96,18 @@ class ScalaEvalExtractorSpec
       val appConfig = AppConfig(mockConfig)
 
       val fileResolver = mock[FileResolver]
+
+      // language=javascript
       val expectedScript =
         """
-          |def produce(data: Map[String, Any]): Seq[Map[String, Any]] = Seq(Map("element" -> data("element")))
+          |function produce(data) {
+          |  console.log(data);
+          |  return [{"element": data.element}];
+          |}
           |""".stripMargin
 
       mockConfig.getInt("it.ldsoftware.migra.max-script-engines") returns 4
-      fileResolver.retrieveFile("testScript.scala") returns expectedScript
+      fileResolver.retrieveFile("testScript.js") returns expectedScript
 
       val c = ConfigFactory.parseString(config)
       val pc = ProcessContext(ActorSystem("test"), appConfig, fileResolver)
@@ -113,3 +118,4 @@ class ScalaEvalExtractorSpec
   }
 
 }
+

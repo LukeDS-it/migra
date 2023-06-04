@@ -21,6 +21,7 @@ val postgresqlVersion = "42.3.3"
 val flywayVersion = "8.5.4"
 val projectScalaVersion = "2.13.8"
 val mockitoScalaVersion = "1.17.12"
+val graalVmVersion = "22.3.1"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -62,7 +63,9 @@ val json = Seq(
 val other = Seq(
   "org.scala-lang" % "scala-compiler" % projectScalaVersion,
   "org.freemarker" % "freemarker" % freemarkerVersion,
-  "org.apache.commons" % "commons-lang3" % lang3Version
+  "org.apache.commons" % "commons-lang3" % lang3Version,
+  "org.graalvm.js" % "js" % graalVmVersion,
+  "org.graalvm.js" % "js-scriptengine" % graalVmVersion
 )
 
 val testDep = Seq(
