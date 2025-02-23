@@ -17,7 +17,7 @@ class JacksonExtensionSpec extends AnyWordSpec with Matchers {
           |}
           |""".stripMargin
 
-      json.jsonGet(None) shouldBe Map("string" -> "abc", "num" -> 123)
+      json.jsonGet(None) shouldBe SubGeneric(Map("string" -> "abc", "num" -> 123))
     }
 
     "convert a json string into a sequence of maps" in {
@@ -31,7 +31,7 @@ class JacksonExtensionSpec extends AnyWordSpec with Matchers {
           |]
           |""".stripMargin
 
-      json.jsonGet(None) shouldBe Seq(Map("string" -> "abc", "num" -> 123))
+      json.jsonGet(None) shouldBe SubArray(Seq(Map("string" -> "abc", "num" -> 123)))
     }
   }
 
