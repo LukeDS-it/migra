@@ -54,8 +54,11 @@ class MigraStandaloneSpec
 
       Then("the application will take data from one table and put it into another")
       eventually {
-        db.run(sql"select name from bought".as[String])
-          .futureValue should contain allElementsOf Seq("steak", "bread", "yogurt")
+        db.run(sql"select name from bought".as[String]).futureValue should contain allElementsOf Seq(
+          "steak",
+          "bread",
+          "yogurt"
+        )
       }
 
       And("a report will be generated")
@@ -81,6 +84,50 @@ class MigraStandaloneSpec
         .filter(_.getAbsolutePath.contains(".log"))
         .foreach(_.delete())
     }
+  }
+
+  Feature("The application can run processes with yaml descriptors") {
+    Given("a test process in yaml format")
+    val descriptor = "src/test/resources/test-db-to-db.yaml"
+    val descriptorPath = new File(descriptor).getAbsolutePath
+    And("a configuration for standalone operations")
+    val standalone = "standalone-mode.conf"
+    val appConfig = AppConfig(ConfigFactory.parseResources(standalone))
+
+    When("the application sets up")
+    MigraApp.run(appConfig, Array(descriptorPath))
+
+    Then("the application will take data from one table and put it into another")
+    eventually {
+      db.run(sql"select name from bought".as[String]).futureValue should contain allElementsOf Seq(
+        "steak",
+        "bread",
+        "yogurt"
+      )
+    }
+
+    And("a report will be generated")
+    eventually {
+      val generated = new File("src/test/resources/")
+        .listFiles()
+        .map(_.getAbsolutePath)
+        .filter(_.contains(".log"))
+      generated should have size 1
+
+      val log = Source.fromFile(generated(0)).use(_.getLines().toList)
+
+      log should contain allElementsOf Seq(
+        """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> steak)""",
+        """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> bread)""",
+        """DatabaseConsumer - 1 rows affected by insert into bought (name) values(:name) with values Map(name -> yogurt)"""
+      )
+
+    }
+
+    new File("src/test/resources/")
+      .listFiles()
+      .filter(_.getAbsolutePath.contains(".log"))
+      .foreach(_.delete())
   }
 
 }

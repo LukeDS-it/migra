@@ -1,6 +1,7 @@
 package it.ldsoftware.migra.engine
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
+import io.circe.yaml.v12.parser
 import it.ldsoftware.migra.engine.consumers.ConsumerFactory
 import it.ldsoftware.migra.engine.extractors.ExtractorFactory
 import it.ldsoftware.migra.engine.providers.TokenProviderFactory
@@ -8,7 +9,7 @@ import it.ldsoftware.migra.engine.providers.TokenProviderFactory
 class ProcessFactory(parLevel: Int) {
 
   def generateProcess(descriptor: String, pc: ProcessContext): ProcessStream = {
-    val config = ConfigFactory.parseString(descriptor)
+    val config = parseConfig(descriptor)
     val extractors = ExtractorFactory.getExtractors(config, pc)
     val consumers = ConsumerFactory.getConsumers(config, pc)
     TokenProviderFactory
@@ -18,5 +19,11 @@ class ProcessFactory(parLevel: Int) {
       }
     new ProcessStream(extractors, consumers, parLevel)
   }
+
+  private[engine] def parseConfig(descriptor: String): Config =
+    parser.parse(descriptor) match {
+      case Left(_)      => ConfigFactory.parseString(descriptor)
+      case Right(value) => ConfigFactory.parseString(value.toString())
+    }
 
 }
