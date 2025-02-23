@@ -1,7 +1,7 @@
 package it.ldsoftware.migra.engine.extractors
 
 import com.typesafe.config.Config
-import it.ldsoftware.migra.engine.{Extracted, ExtractionResult, Extractor, ExtractorBuilder, ProcessContext}
+import it.ldsoftware.migra.engine.*
 import it.ldsoftware.migra.extensions.ConfigExtensions.ConfigOperations
 
 import scala.concurrent.{ExecutionContext, Future}

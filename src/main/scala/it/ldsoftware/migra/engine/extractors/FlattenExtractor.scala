@@ -2,7 +2,7 @@ package it.ldsoftware.migra.engine.extractors
 
 import akka.stream.Materializer
 import com.typesafe.config.Config
-import it.ldsoftware.migra.engine.{Extracted, ExtractionResult, Extractor, ExtractorBuilder, ProcessContext}
+import it.ldsoftware.migra.engine.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

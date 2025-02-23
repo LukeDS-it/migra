@@ -1,14 +1,14 @@
 package it.ldsoftware.migra.engine.consumers
 
 import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.{HttpEntity, HttpMethod, HttpMethods, HttpRequest, MediaTypes}
+import akka.http.scaladsl.model.*
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import it.ldsoftware.migra.engine._
+import it.ldsoftware.migra.engine.*
 import it.ldsoftware.migra.extensions.ConfigExtensions.ConfigOperations
-import it.ldsoftware.migra.extensions.Interpolator._
+import it.ldsoftware.migra.extensions.Interpolator.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
