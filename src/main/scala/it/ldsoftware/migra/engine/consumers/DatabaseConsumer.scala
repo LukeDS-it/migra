@@ -1,7 +1,7 @@
 package it.ldsoftware.migra.engine.consumers
 
 import com.typesafe.config.Config
-import it.ldsoftware.migra.engine._
+import it.ldsoftware.migra.engine.*
 import it.ldsoftware.migra.extensions.DatabaseExtensions
 import it.ldsoftware.migra.extensions.Interpolator.ExtendedConnection
 import it.ldsoftware.migra.extensions.UsableExtensions.{LetOperations, UsableCloseable}

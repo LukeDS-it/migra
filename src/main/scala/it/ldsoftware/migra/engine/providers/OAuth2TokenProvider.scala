@@ -6,7 +6,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import io.circe.generic.auto._
+import io.circe.generic.auto.*
 import it.ldsoftware.migra.engine.providers.OAuth2TokenProvider.{Credentials, OAuth2Authentication, TimedToken}
 import it.ldsoftware.migra.engine.{ProcessContext, TokenProvider, TokenProviderBuilder}
 

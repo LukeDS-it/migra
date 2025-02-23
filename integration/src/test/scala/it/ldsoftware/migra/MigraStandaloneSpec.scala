@@ -10,7 +10,7 @@ import org.scalatest.matchers.should.Matchers
 
 import java.io.File
 import scala.concurrent.Await
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.io.Source
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
@@ -22,7 +22,7 @@ class MigraStandaloneSpec
     with Eventually
     with IntegrationPatience {
 
-  import slick.jdbc.H2Profile.api._
+  import slick.jdbc.H2Profile.api.*
 
   private val jdbcUrl = "jdbc:h2:mem:integration;DB_CLOSE_ON_EXIT=FALSE"
   val db = DatabaseUtils.getDatabase(jdbcUrl, "org.h2.Driver")

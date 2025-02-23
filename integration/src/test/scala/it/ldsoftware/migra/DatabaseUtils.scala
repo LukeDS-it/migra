@@ -2,7 +2,7 @@ package it.ldsoftware.migra
 
 import com.typesafe.config.ConfigFactory
 import slick.jdbc.JdbcBackend.Database
-import slick.jdbc._
+import slick.jdbc.*
 
 object DatabaseUtils {
 

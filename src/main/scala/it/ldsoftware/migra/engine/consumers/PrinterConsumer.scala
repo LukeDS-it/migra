@@ -2,8 +2,8 @@ package it.ldsoftware.migra.engine.consumers
 
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import it.ldsoftware.migra.engine._
-import it.ldsoftware.migra.extensions.Interpolator._
+import it.ldsoftware.migra.engine.*
+import it.ldsoftware.migra.extensions.Interpolator.*
 import it.ldsoftware.migra.extensions.UsableExtensions.LetOperations
 
 import scala.concurrent.{ExecutionContext, Future}

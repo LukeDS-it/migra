@@ -2,7 +2,7 @@ package it.ldsoftware.migra.engine.extractors
 
 import com.typesafe.config.Config
 import it.ldsoftware.migra.engine.{getBuilder, Extractor, ExtractorBuilder, ProcessContext}
-import it.ldsoftware.migra.extensions.ConfigExtensions._
+import it.ldsoftware.migra.extensions.ConfigExtensions.*
 
 object ExtractorFactory {
 

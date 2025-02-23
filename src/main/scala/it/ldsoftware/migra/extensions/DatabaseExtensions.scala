@@ -3,7 +3,7 @@ package it.ldsoftware.migra.extensions
 import com.typesafe.config.Config
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import it.ldsoftware.migra.extensions.UsableExtensions.{LetOperations, MutateOperations}
-import ConfigExtensions._
+import ConfigExtensions.*
 
 import javax.sql.DataSource
 import scala.collection.mutable
