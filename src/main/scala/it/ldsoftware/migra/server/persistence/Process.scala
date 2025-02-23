@@ -25,7 +25,7 @@ object Process {
         persistenceId = PersistenceId.ofUniqueId(id),
         emptyState = ???,
         commandHandler = (state, command) => ???,
-        eventHandler = (state, event) => ???
+        eventHandler = (state, event) => state
       )
       .withTagger(_ => Set(Tag))
 
