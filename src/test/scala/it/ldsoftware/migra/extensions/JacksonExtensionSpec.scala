@@ -1,8 +1,8 @@
 package it.ldsoftware.migra.extensions
 
+import it.ldsoftware.migra.extensions.JacksonExtension.*
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import JacksonExtension._
 
 class JacksonExtensionSpec extends AnyWordSpec with Matchers {
 
@@ -17,7 +17,21 @@ class JacksonExtensionSpec extends AnyWordSpec with Matchers {
           |}
           |""".stripMargin
 
-      json.asMap shouldBe Map("string" -> "abc", "num" -> 123)
+      json.jsonGet(None) shouldBe Map("string" -> "abc", "num" -> 123)
+    }
+
+    "convert a json string into a sequence of maps" in {
+      // language=JSON
+      val json =
+        """[
+          |  {
+          |    "string": "abc",
+          |    "num": 123
+          |  }
+          |]
+          |""".stripMargin
+
+      json.jsonGet(None) shouldBe Seq(Map("string" -> "abc", "num" -> 123))
     }
   }
 

@@ -29,6 +29,6 @@ object Process {
       )
       .withTagger(_ => Set(Tag))
 
-  def init(system: ActorSystem[_]): ActorRef[_] =
+  def init(system: ActorSystem[?]): ActorRef[?] =
     ClusterSharding(system).init(Entity(Key)(context => Process(context.entityId)))
 }

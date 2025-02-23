@@ -33,7 +33,7 @@ object ServerBehavior extends LazyLogging with Directives {
       Behaviors.empty
     }
 
-  private def startHttpServer(routes: Route, port: Int)(implicit system: ActorSystem[_]): Unit = {
+  private def startHttpServer(routes: Route, port: Int)(implicit system: ActorSystem[?]): Unit = {
     import system.executionContext
 
     Http().newServerAt(AllInterfaces, port).bind(routes).onComplete {
