@@ -5,8 +5,8 @@ import it.ldsoftware.migra.engine.{ProcessContext, TokenProvider, TokenProviderB
 
 import scala.concurrent.Future
 
-class DummyTokenProvider(val name: String, token: String) extends TokenProvider {
-  override def token: Future[String] = Future.successful(token)
+class DummyTokenProvider(val name: String, fixedToken: String) extends TokenProvider {
+  override def token: Future[String] = Future.successful(fixedToken)
 }
 
 object DummyTokenProvider extends TokenProviderBuilder {

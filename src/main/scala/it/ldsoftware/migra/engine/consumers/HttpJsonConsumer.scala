@@ -39,10 +39,10 @@ class HttpJsonConsumer(
       }
       .flatMap(r => http.singleRequest(r))
       .flatMap(r => Unmarshal(r).to[String].map(s => (r.status, s)))
-      .map {
-        case (respCode, _) if respCode.isSuccess() =>
+      .map { case (code, body) =>
+        if (code.isSuccess())
           Consumed(s"${method.value} ${url <-- data} with $json executed with success")
-        case (code, body) if code.isFailure() =>
+        else
           NotConsumed(getClass.getName, s"Calling $url with $json returned $code: $body", Some(data), None)
       }
 }

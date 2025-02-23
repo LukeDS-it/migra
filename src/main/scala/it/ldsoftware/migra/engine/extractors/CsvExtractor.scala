@@ -17,7 +17,6 @@ class CsvExtractor(
   override def doExtract(): Future[Seq[ExtractionResult]] = Future {
     csvContent.split("\n").toList match {
       case header :: data => extractRowsWithHeader(header.split(separator).toList, data)
-      case _ :: Nil       => Seq()
       case Nil            => throw new IllegalArgumentException("Cannot extract: file is empty")
     }
   }
