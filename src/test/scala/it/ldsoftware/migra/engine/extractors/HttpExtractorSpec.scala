@@ -52,6 +52,33 @@ class HttpExtractorSpec
       subject.extract().futureValue shouldBe expected
     }
 
+    "get the whole response as list of extraction result" in new Fixture {
+
+      // language=JSON
+      override val config: String =
+        s"""
+           |{
+           | "url": "http://localhost:${wireMock.port()}"
+           |}
+           |""".stripMargin
+
+      // language=JSON
+      private val json =
+        """[
+          |  {
+          |    "strField": "string",
+          |    "intField": 10
+          |  }
+          |]
+          |""".stripMargin
+
+      stubFor(get("/").willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)))
+
+      private val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
+
+      subject.extract().futureValue shouldBe expected
+    }
+
     "get a sub-property of the response as list of extraction result" in new Fixture {
       val subProp = "content"
 
