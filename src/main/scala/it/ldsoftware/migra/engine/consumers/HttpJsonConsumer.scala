@@ -1,14 +1,14 @@
 package it.ldsoftware.migra.engine.consumers
 
 import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.{HttpEntity, HttpMethod, HttpMethods, HttpRequest, MediaTypes}
+import akka.http.scaladsl.model.*
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import it.ldsoftware.migra.engine._
+import it.ldsoftware.migra.engine.*
 import it.ldsoftware.migra.extensions.ConfigExtensions.ConfigOperations
-import it.ldsoftware.migra.extensions.Interpolator._
+import it.ldsoftware.migra.extensions.Interpolator.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,10 +39,10 @@ class HttpJsonConsumer(
       }
       .flatMap(r => http.singleRequest(r))
       .flatMap(r => Unmarshal(r).to[String].map(s => (r.status, s)))
-      .map {
-        case (respCode, _) if respCode.isSuccess() =>
+      .map { case (code, body) =>
+        if (code.isSuccess())
           Consumed(s"${method.value} ${url <-- data} with $json executed with success")
-        case (code, body) if code.isFailure() =>
+        else
           NotConsumed(getClass.getName, s"Calling $url with $json returned $code: $body", Some(data), None)
       }
 }

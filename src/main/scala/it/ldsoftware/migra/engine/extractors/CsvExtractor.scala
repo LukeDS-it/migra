@@ -1,7 +1,7 @@
 package it.ldsoftware.migra.engine.extractors
 
 import com.typesafe.config.Config
-import it.ldsoftware.migra.engine.{Extracted, ExtractionResult, Extractor, ExtractorBuilder, ProcessContext}
+import it.ldsoftware.migra.engine.*
 import it.ldsoftware.migra.extensions.ConfigExtensions.ConfigOperations
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,7 +17,6 @@ class CsvExtractor(
   override def doExtract(): Future[Seq[ExtractionResult]] = Future {
     csvContent.split("\n").toList match {
       case header :: data => extractRowsWithHeader(header.split(separator).toList, data)
-      case _ :: Nil       => Seq()
       case Nil            => throw new IllegalArgumentException("Cannot extract: file is empty")
     }
   }

@@ -43,7 +43,7 @@ class MigraStandaloneSpec
   Feature("The application is able to run standalone processes") {
     Scenario("We want to move data from one table to another") {
       Given("a test process")
-      val descriptor = "src/it/resources/test-db-to-db.json"
+      val descriptor = "src/test/resources/test-db-to-db.json"
       val descriptorPath = new File(descriptor).getAbsolutePath
       And("a configuration for standalone operations")
       val standalone = "standalone-mode.conf"
@@ -60,7 +60,7 @@ class MigraStandaloneSpec
 
       And("a report will be generated")
       eventually {
-        val generated = new File("src/it/resources/")
+        val generated = new File("src/test/resources/")
           .listFiles()
           .map(_.getAbsolutePath)
           .filter(_.contains("executed"))
@@ -76,7 +76,7 @@ class MigraStandaloneSpec
 
       }
 
-      new File("src/it/resources/")
+      new File("src/test/resources/")
         .listFiles()
         .filter(_.getAbsolutePath.contains("executed"))
         .foreach(_.delete())
