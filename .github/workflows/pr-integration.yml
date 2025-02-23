@@ -19,12 +19,12 @@ jobs:
           cache: sbt
       - uses: sbt/setup-sbt@v1
       - name: Ivy Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.ivy2/cache
           key: ${{runner.os}}-sbt-${{hashFiles('**/build.sbt')}}
       - name: Coursier cache
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.cache/coursier
           key: ${{ runner.os }}-coursier-cache-${{ matrix.scala }}-${{ hashFiles('**/*.sbt') }}
