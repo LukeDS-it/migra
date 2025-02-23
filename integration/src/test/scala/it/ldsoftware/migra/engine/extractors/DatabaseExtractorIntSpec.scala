@@ -12,7 +12,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.Await
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
 class DatabaseExtractorIntSpec
@@ -22,7 +22,7 @@ class DatabaseExtractorIntSpec
     with IntegrationPatience
     with IdiomaticMockito {
 
-  import slick.jdbc.H2Profile.api._
+  import slick.jdbc.H2Profile.api.*
 
   private val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
   private val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"

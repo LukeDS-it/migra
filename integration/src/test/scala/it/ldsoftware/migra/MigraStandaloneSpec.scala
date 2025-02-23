@@ -10,7 +10,7 @@ import org.scalatest.matchers.should.Matchers
 
 import java.io.File
 import scala.concurrent.Await
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.io.Source
 
 //noinspection SqlDialectInspection,SqlNoDataSourceInspection
@@ -22,7 +22,7 @@ class MigraStandaloneSpec
     with Eventually
     with IntegrationPatience {
 
-  import slick.jdbc.H2Profile.api._
+  import slick.jdbc.H2Profile.api.*
 
   private val jdbcUrl = "jdbc:h2:mem:integration;DB_CLOSE_ON_EXIT=FALSE"
   val db = DatabaseUtils.getDatabase(jdbcUrl, "org.h2.Driver")
@@ -63,7 +63,7 @@ class MigraStandaloneSpec
         val generated = new File("src/test/resources/")
           .listFiles()
           .map(_.getAbsolutePath)
-          .filter(_.contains("executed"))
+          .filter(_.contains(".log"))
         generated should have size 1
 
         val log = Source.fromFile(generated(0)).use(_.getLines().toList)
@@ -78,7 +78,7 @@ class MigraStandaloneSpec
 
       new File("src/test/resources/")
         .listFiles()
-        .filter(_.getAbsolutePath.contains("executed"))
+        .filter(_.getAbsolutePath.contains(".log"))
         .foreach(_.delete())
     }
   }

@@ -1,14 +1,14 @@
 package it.ldsoftware.migra.engine.extractors
 
 import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.*
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.Materializer
 import com.typesafe.config.Config
-import it.ldsoftware.migra.engine._
+import it.ldsoftware.migra.engine.*
 import it.ldsoftware.migra.extensions.ConfigExtensions.ConfigOperations
 import it.ldsoftware.migra.extensions.Interpolator.StringInterpolator
-import it.ldsoftware.migra.extensions.JacksonExtension._
+import it.ldsoftware.migra.extensions.JacksonExtension.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

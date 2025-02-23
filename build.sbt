@@ -103,6 +103,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val integration = (project in file("integration"))
+  .settings(CompilerSettings.settings)
   .dependsOn(root)
   .settings(
     publish / skip := true,

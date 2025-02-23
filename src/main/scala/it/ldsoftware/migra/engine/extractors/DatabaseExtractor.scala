@@ -1,11 +1,11 @@
 package it.ldsoftware.migra.engine.extractors
 import com.typesafe.config.Config
-import it.ldsoftware.migra.engine._
+import it.ldsoftware.migra.engine.*
 import it.ldsoftware.migra.engine.extractors.DatabaseExtractor.resultSetToList
 import it.ldsoftware.migra.extensions.DatabaseExtensions
-import it.ldsoftware.migra.extensions.Interpolator._
+import it.ldsoftware.migra.extensions.Interpolator.*
 import it.ldsoftware.migra.extensions.UsableExtensions.{LetOperations, UsableCloseable}
-import slick.jdbc._
+import slick.jdbc.*
 
 import java.sql.ResultSet
 import javax.sql.DataSource

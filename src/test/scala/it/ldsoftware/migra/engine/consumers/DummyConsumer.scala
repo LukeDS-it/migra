@@ -1,7 +1,7 @@
 package it.ldsoftware.migra.engine.consumers
 
 import com.typesafe.config.Config
-import it.ldsoftware.migra.engine._
+import it.ldsoftware.migra.engine.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

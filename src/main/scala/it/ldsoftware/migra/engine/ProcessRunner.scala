@@ -3,12 +3,14 @@ package it.ldsoftware.migra.engine
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import akka.stream.scaladsl.{RunnableGraph, Sink}
-import com.typesafe.scalalogging.LazyLogging
+import cats.implicits.catsSyntaxOptionId
+import com.typesafe.scalalogging.{LazyLogging, Logger}
 import it.ldsoftware.migra.configuration.AppConfig
+import it.ldsoftware.migra.engine.ProcessRunner.BiLogger
 import it.ldsoftware.migra.engine.resolvers.LocalFileResolver
 import it.ldsoftware.migra.extensions.IOExtensions.FileFromFileExtensions
 
-import java.io.{File, PrintWriter}
+import java.io.{BufferedWriter, File, FileWriter, PrintWriter}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
@@ -29,38 +31,67 @@ class ProcessRunner extends LazyLogging {
       val pc = ProcessContext(system, appConfig, new LocalFileResolver(file))
 
       val process = new ProcessFactory(appConfig.parallelism).generateProcess(manifest, pc)
+      val processLogger = new BiLogger(logger, file.getAbsolutePath)
 
-      val loggerSink = Sink.fold[String, ConsumerResult]("") {
+      val loggerSink = Sink.fold[ProcessStats, ConsumerResult](ProcessStats(0, 0)) {
         case (acc, Consumed(info)) =>
-          logger.info(info)
-          if (acc.isEmpty) info else s"$acc\n$info"
+          processLogger.info(info)
+          acc.withSuccess
         case (acc, NotConsumed(consumer, reason, data, err)) =>
-          logger.error(s"$consumer could not consume $data: $reason", err)
-          val info = s"$consumer could not consume $data: $reason"
-          if (acc.isEmpty) info else s"$acc\n$info"
+          processLogger.error(s"$consumer could not consume $data: $reason", err)
+          acc.withFailure
       }
 
       RunnableGraph
         .fromGraph(process.executionGraph(loggerSink))
         .run()
         .onComplete {
-          case Success(value) =>
-            logger.info("Process was completed with success. Log report has been generated.")
-            writeOutput(file.getAbsolutePath, value)
+          case Success(stats) =>
+            processLogger.info("-----------------------------------")
+            processLogger.info("Process was completed with success.")
+            processLogger.info("-----------------------------------")
+            processLogger.info(s"${stats.consumed + stats.notConsumed} total elements consumed.")
+            processLogger.info(s"${stats.consumed} successfully processed.")
+            processLogger.info(s"${stats.notConsumed} processed with errors.")
+            processLogger.info("-----------------------------------")
+            processLogger.terminate()
             system.terminate()
           case Failure(exception) =>
-            logger.error("Could not complete the process due to an error", exception)
+            processLogger.info("-----------------------------------")
+            processLogger.error("Could not complete the process due to an error", exception.some)
+            processLogger.info("-----------------------------------")
             system.terminate()
         }
     }
 
-  private def writeOutput(descriptorPath: String, report: String): Unit = {
-    val formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HH-mm-ss")
-    val dateTime = formatter.format(LocalDateTime.now())
-    val outputPath = s"$descriptorPath.executed[$dateTime]"
-    val writer = new PrintWriter(new File(outputPath))
-    writer.write(report)
-    writer.close()
+}
+
+object ProcessRunner {
+
+  private class BiLogger(logger: Logger, descriptorPath: String) {
+    private val formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HH-mm-ss")
+    private val startDate = formatter.format(LocalDateTime.now())
+    private val logFile = new File(s"$descriptorPath-$startDate.log")
+    private val fileLogger = new BufferedWriter(new FileWriter(logFile))
+
+    def info(msg: String): Unit = {
+      logger.info(msg)
+      fileLogger.write(msg)
+      fileLogger.newLine()
+      fileLogger.flush()
+    }
+
+    def error(msg: String, throwable: Option[Throwable]): Unit = {
+      throwable match {
+        case Some(err) => logger.error(msg, err)
+        case None => logger.error(msg)
+      }
+      fileLogger.write(msg)
+      fileLogger.newLine()
+      fileLogger.flush()
+    }
+
+    def terminate(): Unit = fileLogger.close()
   }
 
 }

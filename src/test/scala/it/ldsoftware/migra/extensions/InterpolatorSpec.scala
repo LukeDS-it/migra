@@ -1,6 +1,6 @@
 package it.ldsoftware.migra.extensions
 
-import it.ldsoftware.migra.extensions.Interpolator._
+import it.ldsoftware.migra.extensions.Interpolator.*
 import org.mockito.IdiomaticMockito
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

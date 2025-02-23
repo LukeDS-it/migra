@@ -2,7 +2,7 @@ package it.ldsoftware.migra.engine.consumers
 
 import com.typesafe.config.Config
 import it.ldsoftware.migra.engine.{getBuilder, Consumer, ConsumerBuilder, ProcessContext}
-import it.ldsoftware.migra.extensions.ConfigExtensions._
+import it.ldsoftware.migra.extensions.ConfigExtensions.*
 
 object ConsumerFactory {
 

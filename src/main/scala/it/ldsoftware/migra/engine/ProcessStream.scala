@@ -13,9 +13,9 @@ class ProcessStream(extractors: List[Extractor], consumers: List[Consumer], parL
       .future(extractors.head.extract())
       .flatMapConcat(i => Source(i))
 
-  lazy val identity: Flow[ExtractionResult, ExtractionResult, NotUsed] = Flow[ExtractionResult]
+  private lazy val identity: Flow[ExtractionResult, ExtractionResult, NotUsed] = Flow[ExtractionResult]
 
-  lazy val pipe: List[Flow[ExtractionResult, ExtractionResult, NotUsed]] =
+  private lazy val pipe: List[Flow[ExtractionResult, ExtractionResult, NotUsed]] =
     extractors.tail.map { e =>
       e.throttling
         .map(d => Flow[ExtractionResult].throttle(1, d))
@@ -32,9 +32,9 @@ class ProcessStream(extractors: List[Extractor], consumers: List[Consumer], parL
         .mapAsync(parLevel)(rd => c.consume(rd))
     }
 
-  def executionGraph(sink: Sink[ConsumerResult, Future[String]]): Graph[ClosedShape, Future[String]] =
+  def executionGraph(sink: Sink[ConsumerResult, Future[ProcessStats]]): Graph[ClosedShape, Future[ProcessStats]] =
     GraphDSL.createGraph(sink) { implicit builder => sink =>
-      import GraphDSL.Implicits._
+      import GraphDSL.Implicits.*
 
       val piped = pipe.foldLeft(input ~> identity) { case (acc, next) =>
         acc ~> next
