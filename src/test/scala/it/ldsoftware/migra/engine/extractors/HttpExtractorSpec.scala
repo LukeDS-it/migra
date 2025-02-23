@@ -1,6 +1,6 @@
 package it.ldsoftware.migra.engine.extractors
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.client.{BasicCredentials, WireMock}

@@ -1,6 +1,6 @@
 package it.ldsoftware.migra.server.services
 
-import akka.cluster.sharding.typed.scaladsl.ClusterSharding
+import org.apache.pekko.cluster.sharding.typed.scaladsl.ClusterSharding
 
 class ProcessService(sharding: ClusterSharding) {
 

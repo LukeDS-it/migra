@@ -1,6 +1,6 @@
 package it.ldsoftware.migra.server.http
 
-import akka.http.scaladsl.server.Route
+import org.apache.pekko.http.scaladsl.server.Route
 import it.ldsoftware.migra.server.services.ProcessService
 
 class ProcessRoutes(processService: ProcessService) {

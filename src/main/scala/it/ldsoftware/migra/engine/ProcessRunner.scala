@@ -1,8 +1,8 @@
 package it.ldsoftware.migra.engine
 
-import akka.actor.ActorSystem
-import akka.stream.Materializer
-import akka.stream.scaladsl.{RunnableGraph, Sink}
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl.{RunnableGraph, Sink}
 import cats.implicits.catsSyntaxOptionId
 import com.typesafe.scalalogging.{LazyLogging, Logger}
 import it.ldsoftware.migra.configuration.AppConfig

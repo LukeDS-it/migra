@@ -1,8 +1,8 @@
 package it.ldsoftware.migra.engine
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.{Http, HttpExt}
-import akka.stream.Materializer
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.{Http, HttpExt}
+import org.apache.pekko.stream.Materializer
 import it.ldsoftware.migra.configuration.AppConfig
 
 import scala.collection.mutable
