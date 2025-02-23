@@ -63,7 +63,7 @@ class MigraStandaloneSpec
         val generated = new File("src/test/resources/")
           .listFiles()
           .map(_.getAbsolutePath)
-          .filter(_.contains("executed"))
+          .filter(_.contains(".log"))
         generated should have size 1
 
         val log = Source.fromFile(generated(0)).use(_.getLines().toList)
@@ -78,7 +78,7 @@ class MigraStandaloneSpec
 
       new File("src/test/resources/")
         .listFiles()
-        .filter(_.getAbsolutePath.contains("executed"))
+        .filter(_.getAbsolutePath.contains(".log"))
         .foreach(_.delete())
     }
   }
