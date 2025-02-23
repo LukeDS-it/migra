@@ -1,0 +1,12 @@
+extract:
+  - type: DatabaseExtractor
+    config:
+      query: select name from products where price <= 1000
+      jdbc-url: jdbc:h2:mem:integration;DB_CLOSE_ON_EXIT=FALSE
+      jdbc-driver: org.h2.Driver
+consume:
+  - type: DatabaseConsumer
+    config:
+      query: insert into bought (name) values(:name)
+      jdbc-url: jdbc:h2:mem:integration;DB_CLOSE_ON_EXIT=FALSE
+      jdbc-driver: org.h2.Driver

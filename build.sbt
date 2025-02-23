@@ -13,6 +13,7 @@ val janinoVersion = "3.1.12"
 val encoderVersion = "8.0"
 val pekkoHttpJsonVersion = "2.5.0"
 val circeVersion = "0.14.10"
+val circeYamlVersion = "0.15.1"
 val freemarkerVersion = "2.3.34"
 val scalacticVersion = "3.2.19"
 val lang3Version = "3.17.0"
@@ -25,7 +26,7 @@ val flywayVersion = "11.3.3"
 val mockitoScalaVersion = "1.17.37"
 val graalVmVersion = "24.1.2"
 
-val akka = Seq(
+val pekko = Seq(
   "org.apache.pekko" %% "pekko-stream" % pekkoVersion,
   "org.apache.pekko" %% "pekko-actor-typed" % pekkoVersion,
   "org.apache.pekko" %% "pekko-persistence-typed" % pekkoVersion,
@@ -62,6 +63,10 @@ val json = Seq(
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
 )
 
+val yaml = Seq(
+  "io.circe" %% "circe-yaml-v12" % circeYamlVersion
+)
+
 val other = Seq(
   "org.scala-lang" % "scala-compiler" % projectScalaVersion,
   "org.freemarker" % "freemarker" % freemarkerVersion,
@@ -94,7 +99,7 @@ lazy val root = (project in file("."))
     organization := "it.ldsoftware",
     name := "migra",
     Compile / mainClass := Some("it.ldsoftware.migra.MigraApp"),
-    libraryDependencies ++= akka ++ database ++ logging ++ json ++ other ++ testDep,
+    libraryDependencies ++= pekko ++ database ++ logging ++ json ++ yaml ++ other ++ testDep,
     Test / fork := true,
     Test / envVars := Map(
       "UNIT_DB_USER" -> "user",
