@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
+import scala.util.Try
+
 object JacksonExtension {
 
   val objectMapper: ObjectMapper = new ObjectMapper().registerModule(DefaultScalaModule)
@@ -13,11 +15,13 @@ object JacksonExtension {
 
   implicit class JsonOps(json: String) {
 
-    def asMap: Map[String, Any] = objectMapper.readValue(json, GenericTypeRef)
+    private def asMap: Map[String, Any] = objectMapper.readValue(json, GenericTypeRef)
+
+    private def asSeq: Seq[Map[String, Any]] = objectMapper.readValue(json, GenericSeqTypeRef)
 
     def jsonGet(propName: String): SubProperty =
       asMap.get(propName) match {
-        case Some(prop) if prop.isInstanceOf[Seq[_]] => SubArray(objectMapper.convertValue(prop, GenericSeqTypeRef))
+        case Some(prop) if prop.isInstanceOf[Seq[?]] => SubArray(objectMapper.convertValue(prop, GenericSeqTypeRef))
         case Some(prop)                              => SubGeneric(objectMapper.convertValue(prop, GenericTypeRef))
         case None                                    => SubGeneric(Map())
       }
@@ -25,7 +29,7 @@ object JacksonExtension {
     def jsonGet(optProp: Option[String]): SubProperty =
       optProp match {
         case Some(subProp) => jsonGet(subProp)
-        case None          => SubGeneric(asMap)
+        case None          => Try(SubGeneric(asMap)).getOrElse(SubArray(asSeq))
       }
 
   }

@@ -2,9 +2,9 @@ package it.ldsoftware.migra.engine.extractors
 
 import akka.actor.ActorSystem
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.client.{BasicCredentials, WireMock}
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration.*
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{Extractor, FileResolver, ProcessContext, TokenProvider}
@@ -43,6 +43,33 @@ class HttpExtractorSpec
           |  "strField": "string",
           |  "intField": 10
           |}
+          |""".stripMargin
+
+      stubFor(get("/").willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)))
+
+      private val expected = Seq(Right(Map("strField" -> "string", "intField" -> 10)))
+
+      subject.extract().futureValue shouldBe expected
+    }
+
+    "get the whole response as list of extraction result" in new Fixture {
+
+      // language=JSON
+      override val config: String =
+        s"""
+           |{
+           | "url": "http://localhost:${wireMock.port()}"
+           |}
+           |""".stripMargin
+
+      // language=JSON
+      private val json =
+        """[
+          |  {
+          |    "strField": "string",
+          |    "intField": 10
+          |  }
+          |]
           |""".stripMargin
 
       stubFor(get("/").willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)))

@@ -25,10 +25,10 @@ object Process {
         persistenceId = PersistenceId.ofUniqueId(id),
         emptyState = ???,
         commandHandler = (state, command) => ???,
-        eventHandler = (state, event) => ???
+        eventHandler = (state, event) => state
       )
       .withTagger(_ => Set(Tag))
 
-  def init(system: ActorSystem[_]): ActorRef[_] =
+  def init(system: ActorSystem[?]): ActorRef[?] =
     ClusterSharding(system).init(Entity(Key)(context => Process(context.entityId)))
 }
