@@ -1,27 +1,29 @@
+val projectScalaVersion = "2.13.16"
+ThisBuild / scalaVersion := projectScalaVersion
+
 val akkaVersion = "2.6.19"
 val akkaHttpVersion = "10.2.9"
 val akkaJdbcVersion = "3.5.3"
 val slickVersion = "3.3.3"
-val mysqlVersion = "8.0.30"
-val h2Version = "2.1.210"
-val scalaLoggingVersion = "3.9.4"
-val logbackVersion = "1.2.11"
-val janinoVersion = "3.1.6"
-val encoderVersion = "7.0.1"
+val mysqlVersion = "8.0.33"
+val h2Version = "2.3.232"
+val scalaLoggingVersion = "3.9.5"
+val logbackVersion = "1.5.16"
+val janinoVersion = "3.1.12"
+val encoderVersion = "8.0"
 val akkaHttpCirceVersion = "1.39.2"
-val circeVersion = "0.14.1"
-val freemarkerVersion = "2.3.31"
-val scalacticVersion = "3.2.11"
-val lang3Version = "3.12.0"
-val jsonPathVersion = "2.7.0"
-val jacksonVersion = "2.13.2"
+val circeVersion = "0.14.10"
+val freemarkerVersion = "2.3.34"
+val scalacticVersion = "3.2.19"
+val lang3Version = "3.17.0"
+val jsonPathVersion = "2.9.0"
+val jacksonVersion = "2.18.2"
 val wiremockVersion = "2.32.0"
 val scalamockVersion = "5.2.0"
-val postgresqlVersion = "42.3.3"
-val flywayVersion = "8.5.4"
-val projectScalaVersion = "2.13.8"
-val mockitoScalaVersion = "1.17.12"
-val graalVmVersion = "22.3.1"
+val postgresqlVersion = "42.7.5"
+val flywayVersion = "11.3.3"
+val mockitoScalaVersion = "1.17.37"
+val graalVmVersion = "24.1.2"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -69,26 +71,42 @@ val other = Seq(
 )
 
 val testDep = Seq(
-  "org.scalactic" %% "scalactic" % scalacticVersion % "test,it",
-  "org.scalatest" %% "scalatest" % scalacticVersion % "test,it",
+  "org.scalactic" %% "scalactic" % scalacticVersion % Test,
+  "org.scalatest" %% "scalatest" % scalacticVersion % Test,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % Test,
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-persistence-testkit" % akkaVersion % Test,
-  "org.mockito" %% "mockito-scala" % mockitoScalaVersion % "test,it"
+  "org.mockito" %% "mockito-scala" % mockitoScalaVersion % Test
+)
+
+val itTestDep = Seq(
+  "org.scalactic" %% "scalactic" % scalacticVersion % Test,
+  "org.scalatest" %% "scalatest" % scalacticVersion % Test,
+  "org.mockito" %% "mockito-scala" % mockitoScalaVersion % Test
 )
 
 lazy val root = (project in file("."))
-  .configs(IntegrationTest)
-  .settings(Defaults.itSettings)
+  .settings(CompilerSettings.settings)
   .settings(
     organization := "it.ldsoftware",
     name := "migra",
-    scalaVersion := projectScalaVersion,
     Compile / mainClass := Some("it.ldsoftware.migra.MigraApp"),
     libraryDependencies ++= akka ++ database ++ logging ++ json ++ other ++ testDep,
+    Test / fork := true,
+    Test / envVars := Map(
+      "UNIT_DB_USER" -> "user",
+      "UNIT_DB_PASS" -> "pass"
+    )
+  )
+
+lazy val integration = (project in file("integration"))
+  .dependsOn(root)
+  .settings(
+    publish / skip := true,
+    libraryDependencies ++= testDep ++ itTestDep,
     Test / fork := true,
     Test / envVars := Map(
       "UNIT_DB_USER" -> "user",

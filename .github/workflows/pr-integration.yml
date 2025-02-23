@@ -40,4 +40,4 @@ jobs:
       - name: Build
         run: sbt compile
       - name: Integration tests
-        run: sbt it:test
+        run: sbt "project integration" test

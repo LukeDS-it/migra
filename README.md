@@ -24,7 +24,7 @@ generate another sequence of data.
 ## Consumers
 Consumers are the L phase of the ETL process. They represent terminal operations
 and are usually used to load data into another place.
-A process can have any nymber of consumers set, and they will all run in parallel
+A process can have any number of consumers set, and they will all run in parallel
 taking data from the last extractor.
 
 # Building and using
