@@ -1,6 +1,6 @@
 package it.ldsoftware.migra.engine.consumers
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.DatabaseUtils
 import it.ldsoftware.migra.configuration.AppConfig
@@ -30,7 +30,7 @@ class DatabaseConsumerIntSpec
   import slick.jdbc.H2Profile.api.*
 
   private val pc = ProcessContext(ActorSystem("test"), mock[AppConfig], mock[FileResolver])
-  private val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.randomAlphanumeric(10)};DB_CLOSE_DELAY=-1"
+  private val jdbcUrl = s"jdbc:h2:mem:${RandomStringUtils.secure().nextAlphanumeric(10)};DB_CLOSE_DELAY=-1"
   private val db = DatabaseUtils.getDatabase(jdbcUrl, "org.h2.Driver")
 
   private val execute = db.run(

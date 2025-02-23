@@ -1,7 +1,7 @@
 package it.ldsoftware.migra.engine
 
-import akka.http.scaladsl.model.HttpHeader
-import akka.http.scaladsl.model.headers.{Authorization, BasicHttpCredentials, GenericHttpCredentials, OAuth2BearerToken}
+import org.apache.pekko.http.scaladsl.model.HttpHeader
+import org.apache.pekko.http.scaladsl.model.headers.{Authorization, BasicHttpCredentials, GenericHttpCredentials, OAuth2BearerToken}
 import com.typesafe.config.Config
 import it.ldsoftware.migra.extensions.CredentialManager
 

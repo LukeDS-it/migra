@@ -1,6 +1,6 @@
 package it.ldsoftware.migra.engine.extractors
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.engine.{Extracted, ExtractionResult, Extractor, FileResolver, ProcessContext}

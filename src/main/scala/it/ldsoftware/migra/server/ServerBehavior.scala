@@ -1,10 +1,10 @@
 package it.ldsoftware.migra.server
 
-import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorSystem, Behavior}
-import akka.cluster.sharding.typed.scaladsl.ClusterSharding
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.{Directives, Route}
+import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.apache.pekko.actor.typed.{ActorSystem, Behavior}
+import org.apache.pekko.cluster.sharding.typed.scaladsl.ClusterSharding
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.server.{Directives, Route}
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.migra.configuration.AppConfig
 import it.ldsoftware.migra.server.http.{HealthRoutes, ProcessRoutes}

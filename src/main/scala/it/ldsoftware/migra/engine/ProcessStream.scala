@@ -1,8 +1,8 @@
 package it.ldsoftware.migra.engine
 
-import akka.NotUsed
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
-import akka.stream.{ClosedShape, Graph}
+import org.apache.pekko.NotUsed
+import org.apache.pekko.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
+import org.apache.pekko.stream.{ClosedShape, Graph}
 
 import scala.concurrent.Future
 

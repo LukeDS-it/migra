@@ -1,6 +1,6 @@
 package it.ldsoftware.migra
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import it.ldsoftware.migra.configuration.AppConfig

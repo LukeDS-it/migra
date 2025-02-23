@@ -1,11 +1,11 @@
 package it.ldsoftware.migra.engine.providers
 
-import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.{FormData, HttpMethods, HttpRequest}
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.Materializer
+import com.github.pjfanning.pekkohttpcirce.FailFastCirceSupport
+import org.apache.pekko.http.scaladsl.HttpExt
+import org.apache.pekko.http.scaladsl.model.{FormData, HttpMethods, HttpRequest}
+import org.apache.pekko.http.scaladsl.unmarshalling.Unmarshal
+import org.apache.pekko.stream.Materializer
 import com.typesafe.config.Config
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.generic.auto.*
 import it.ldsoftware.migra.engine.providers.OAuth2TokenProvider.{Credentials, OAuth2Authentication, TimedToken}
 import it.ldsoftware.migra.engine.{ProcessContext, TokenProvider, TokenProviderBuilder}

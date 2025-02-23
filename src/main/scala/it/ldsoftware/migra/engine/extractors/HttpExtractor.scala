@@ -1,9 +1,9 @@
 package it.ldsoftware.migra.engine.extractors
 
-import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.*
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.Materializer
+import org.apache.pekko.http.scaladsl.HttpExt
+import org.apache.pekko.http.scaladsl.model.*
+import org.apache.pekko.http.scaladsl.unmarshalling.Unmarshal
+import org.apache.pekko.stream.Materializer
 import com.typesafe.config.Config
 import it.ldsoftware.migra.engine.*
 import it.ldsoftware.migra.extensions.ConfigExtensions.ConfigOperations

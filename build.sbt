@@ -1,24 +1,24 @@
 val projectScalaVersion = "2.13.16"
 ThisBuild / scalaVersion := projectScalaVersion
 
-val akkaVersion = "2.6.19"
-val akkaHttpVersion = "10.2.9"
-val akkaJdbcVersion = "3.5.3"
-val slickVersion = "3.3.3"
+val pekkoVersion = "1.1.3"
+val pekkoJdbcVersion = "1.1.0"
+val pekkoHttpVersion = "1.1.0"
+val slickVersion = "3.5.2"
 val mysqlVersion = "8.0.33"
 val h2Version = "2.3.232"
 val scalaLoggingVersion = "3.9.5"
 val logbackVersion = "1.5.16"
 val janinoVersion = "3.1.12"
 val encoderVersion = "8.0"
-val akkaHttpCirceVersion = "1.39.2"
+val pekkoHttpJsonVersion = "2.5.0"
 val circeVersion = "0.14.10"
 val freemarkerVersion = "2.3.34"
 val scalacticVersion = "3.2.19"
 val lang3Version = "3.17.0"
 val jsonPathVersion = "2.9.0"
 val jacksonVersion = "2.18.2"
-val wiremockVersion = "2.32.0"
+val wiremockVersion = "3.0.1"
 val scalamockVersion = "5.2.0"
 val postgresqlVersion = "42.7.5"
 val flywayVersion = "11.3.3"
@@ -26,15 +26,15 @@ val mockitoScalaVersion = "1.17.37"
 val graalVmVersion = "24.1.2"
 
 val akka = Seq(
-  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-  "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
-  "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion,
-  "com.typesafe.akka" %% "akka-cluster-sharding-typed" % akkaVersion,
-  "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
-  "com.typesafe.akka" %% "akka-serialization-jackson" % akkaVersion,
-  "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-  "com.github.dnvriend" %% "akka-persistence-jdbc" % akkaJdbcVersion,
-  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+  "org.apache.pekko" %% "pekko-stream" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-actor-typed" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-persistence-typed" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-cluster-sharding-typed" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-persistence-query" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-serialization-jackson" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-slf4j" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-persistence-jdbc" % pekkoJdbcVersion,
+  "org.apache.pekko" %% "pekko-http" % pekkoHttpVersion
 )
 
 val database = Seq(
@@ -53,7 +53,7 @@ val logging = Seq(
 )
 
 val json = Seq(
-  "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCirceVersion,
+  "com.github.pjfanning" %% "pekko-http-circe" % pekkoHttpJsonVersion,
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
@@ -74,11 +74,11 @@ val testDep = Seq(
   "org.scalactic" %% "scalactic" % scalacticVersion % Test,
   "org.scalatest" %% "scalatest" % scalacticVersion % Test,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % Test,
-  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
-  "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
-  "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
-  "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
-  "com.typesafe.akka" %% "akka-persistence-testkit" % akkaVersion % Test,
+  "org.apache.pekko" %% "pekko-testkit" % pekkoVersion % Test,
+  "org.apache.pekko" %% "pekko-actor-testkit-typed" % pekkoVersion % Test,
+  "org.apache.pekko" %% "pekko-http-testkit" % pekkoHttpVersion % Test,
+  "org.apache.pekko" %% "pekko-stream-testkit" % pekkoVersion % Test,
+  "org.apache.pekko" %% "pekko-persistence-testkit" % pekkoVersion % Test,
   "org.mockito" %% "mockito-scala" % mockitoScalaVersion % Test
 )
 

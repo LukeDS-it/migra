@@ -1,6 +1,6 @@
 package it.ldsoftware.migra.engine.providers
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
@@ -39,10 +39,10 @@ class OAuth2TokenProviderSpec
 
   "token" should {
     "get the token from an oauth2 endpoint implementation" in {
-      val expectedToken = RandomStringUtils.randomAlphanumeric(10)
+      val expectedToken = RandomStringUtils.secure().nextAlphanumeric(10)
       val expectedMillis = Random.nextInt()
-      val id = RandomStringUtils.randomAlphanumeric(10)
-      val secret = RandomStringUtils.randomAlphanumeric(10)
+      val id = RandomStringUtils.secure().nextAlphanumeric(10)
+      val secret = RandomStringUtils.secure().nextAlphanumeric(10)
 
       // language=JSON
       val config =
@@ -77,11 +77,11 @@ class OAuth2TokenProviderSpec
     }
 
     "get a new token if the old one is about to expire" in {
-      val token1 = RandomStringUtils.randomAlphanumeric(10)
+      val token1 = RandomStringUtils.secure().nextAlphanumeric(10)
       val expiration = 9_000 // 9 seconds
-      val token2 = RandomStringUtils.randomAlphanumeric(10)
-      val id = RandomStringUtils.randomAlphanumeric(10)
-      val secret = RandomStringUtils.randomAlphanumeric(10)
+      val token2 = RandomStringUtils.secure().nextAlphanumeric(10)
+      val id = RandomStringUtils.secure().nextAlphanumeric(10)
+      val secret = RandomStringUtils.secure().nextAlphanumeric(10)
 
       // language=JSON
       val config =
