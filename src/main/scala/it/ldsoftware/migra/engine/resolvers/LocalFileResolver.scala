@@ -10,8 +10,11 @@ class LocalFileResolver(processFile: File) extends FileResolver {
 
   private val relativeRoot = processFile.getAbsolutePath.substring(0, processFile.getAbsolutePath.lastIndexOf("/"))
 
-  @tailrec final override def retrieveFile(fileName: String): String =
-    if (fileName.startsWith("/")) fileName.readFile
-    else retrieveFile(s"$relativeRoot/$fileName")
+  final override def retrieveFile(fileName: String): String =
+    getFilePath(fileName).readFile
+
+  @tailrec final override def getFilePath(fileName: String): String =
+    if (fileName.startsWith("/")) fileName
+    else getFilePath(s"$relativeRoot/$fileName")
 
 }
