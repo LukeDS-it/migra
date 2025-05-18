@@ -5,6 +5,7 @@ import org.apache.pekko.http.scaladsl.{Http, HttpExt}
 import org.apache.pekko.stream.Materializer
 import it.ldsoftware.migra.configuration.AppConfig
 
+import java.io.{BufferedWriter, FileWriter}
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 
@@ -33,5 +34,7 @@ case class ProcessContext(
   def addTokenCache(name: String, tokenProvider: TokenProvider): Unit = tokenCaches.put(name, tokenProvider)
 
   def retrieveFile(name: String): String = fileResolver.retrieveFile(name)
+
+  def openFile(name: String): BufferedWriter = new BufferedWriter(new FileWriter(fileResolver.getFilePath(name)))
 
 }
